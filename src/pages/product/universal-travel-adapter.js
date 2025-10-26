@@ -334,7 +334,7 @@ const ProductDetails = ({ initialProduct }) => {
               <div className='grid grid-cols-1 sm:grid-cols-4 gap-4'>
                 <div className='col-span-1 sm:col-span-3'>
                   <img
-                    className='w-full h-64 sm:h-80 lg:h-[400px] object-cover rounded-lg image-transition'
+                    className='w-full h-72  lg:h-[400px] object-cover rounded-lg image-transition'
                     src={activeImage}
                     alt={product.title}
                   />
@@ -342,7 +342,7 @@ const ProductDetails = ({ initialProduct }) => {
                     {product.images.map((image, index) => (
                       <img
                         key={index}
-                        className={`w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg cursor-pointer small-image ${
+                        className={`w-16 h-16  sm:h-20 object-cover rounded-lg cursor-pointer small-image ${
                           activeImage === image
                             ? 'small-image-active'
                             : 'small-image-inactive'
