@@ -44,8 +44,8 @@ const ProductDetails = ({ initialProduct }) => {
   const variantData = {
     '25W': { price: 1350, originalPrice: 1550 },
     '35W': { price: 1650, originalPrice: 1850 },
-    '45W': { price: 1800, originalPrice: 2050 },
-    '65W': { price: 2500, originalPrice: 2900 },
+    '45W': { price: 1799, originalPrice: 2050 },
+    '65W': { price: 2499, originalPrice: 2900 },
   };
 
   const variantToIndex = {
@@ -472,6 +472,9 @@ const ProductDetails = ({ initialProduct }) => {
                   <span>{product.inStock ? 'এখনই কিনুন' : 'স্টক নেই'}</span>
                 </button>
               </div>
+              <p className='text-sm text-gray-600 font-semibold'>
+                *প্রতিটি প্রোডাক্টের সাথে পেয়ে যাচ্ছেন ১ বছরের ওয়ারেন্টি ।
+              </p>
             </div>
           </div>
         </div>
