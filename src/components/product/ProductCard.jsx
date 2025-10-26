@@ -30,7 +30,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className='bg-white border border-primary  p-2 md:p-0 w-40 md:w-56 flex flex-col h-[300px] md:h-[360px]'>
+    <div className='bg-white border border-primary  p-2 md:p-3   flex flex-col h-[300px] md:h-[360px]'>
       {/* Product Image Section */}
       {product.inStock ? (
         <div className='relative flex-shrink-0'>
