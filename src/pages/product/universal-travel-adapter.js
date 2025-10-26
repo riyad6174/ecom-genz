@@ -42,10 +42,10 @@ const ProductDetails = ({ initialProduct }) => {
 
   // Variant-specific pricing data
   const variantData = {
-    '25W': { price: 1250, originalPrice: 1550 },
-    '35W': { price: 1350, originalPrice: 1650 },
-    '45W': { price: 1750, originalPrice: 1950 },
-    '65W': { price: 2400, originalPrice: 2700 },
+    '25W': { price: 1350, originalPrice: 1550 },
+    '35W': { price: 1650, originalPrice: 1850 },
+    '45W': { price: 1800, originalPrice: 2050 },
+    '65W': { price: 2500, originalPrice: 2900 },
   };
 
   const variantToIndex = {
