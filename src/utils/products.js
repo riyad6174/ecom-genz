@@ -12,10 +12,10 @@ export const products = [
     description:
       '২৫-৬৫ ওয়াট ইউনিভার্সাল ট্রাভেল অ্যাডাপ্টর যেটি আপনার যেকোনো ডিভাইস চার্জিং এর জন্য পারফেক্ট সলিউশন।',
     images: [
-      '/assets/product/adapter/25w.jpg',
-      '/assets/product/adapter/35w.png',
-      '/assets/product/adapter/45w.jpg',
-      '/assets/product/adapter/65w.jpg',
+      '/assets/product/adapter/25w-main.png',
+      '/assets/product/adapter/35w-main.png',
+      '/assets/product/adapter/45w-main.png',
+      '/assets/product/adapter/65w-main.png',
     ],
     variants: [
       { type: '25W' },

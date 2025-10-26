@@ -531,7 +531,12 @@ const ProductDetails = ({ initialProduct }) => {
             <div className='mt-6'>
               <h3 className='text-md font-semibold mb-3'>পণ্যের গ্যালারি</h3>
               <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-                {product.images.map((image, index) => (
+                {[
+                  '/assets/product/adapter/25w.jpg',
+                  '/assets/product/adapter/35w.png',
+                  '/assets/product/adapter/45w.jpg',
+                  '/assets/product/adapter/65w.jpg',
+                ].map((image, index) => (
                   <div
                     key={index}
                     className='relative overflow-hidden rounded-lg shadow-md'
