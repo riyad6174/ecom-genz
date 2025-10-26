@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /checkout/
+Disallow: /cart/
+Allow: /
+
+Sitemap: https://www.genzshop.store/sitemap.xml
