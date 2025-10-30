@@ -109,7 +109,7 @@ export const products = [
     title: 'Adjustable Polarized Sunglass',
     slug: 'adjustable-tint-polarized-sunglass',
     model: 'Black',
-    price: 1350.0,
+    price: 1390.0,
     originalPrice: 2000.0,
     sectionType: 'hot',
     inStock: true,
