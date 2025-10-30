@@ -532,7 +532,7 @@ const ProductDetails = ({ initialProduct }) => {
               <h3 className='text-md font-semibold mb-3'>পণ্যের গ্যালারি</h3>
               <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
                 {[
-                  '/assets/product/adapter/20W.jpg',
+                  '/assets/product/adapter/20w-main.png',
                   '/assets/product/adapter/35w.png',
                   '/assets/product/adapter/45w.jpg',
                   '/assets/product/adapter/65w.jpg',
