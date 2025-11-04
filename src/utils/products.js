@@ -34,8 +34,7 @@ export const products = [
     sectionType: 'hot',
     inStock: true,
     thumbnail: '/assets/product/adapter/25w.jpg',
-    description:
-      '২০ ওয়াট ইউনিভার্সাল ট্রাভেল অ্যাডাপ্টর যেটি আপনার যেকোনো ডিভাইস চার্জিং এর জন্য পারফেক্ট সলিউশন।',
+    description: 'এটি আপনার যেকোনো ডিভাইস চার্জিং এর জন্য পারফেক্ট সলিউশন।',
     images: [
       '/assets/product/adapter/25w.jpg',
       '/assets/product/adapter/35w.png',

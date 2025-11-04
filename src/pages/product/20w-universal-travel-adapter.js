@@ -529,7 +529,7 @@ const ProductDetails = ({ initialProduct }) => {
                 </button>
               </div>
               <p className='text-sm text-blue-600 font-semibold mb-2'>
-                #স্টকে আছে ৪০ টি প্রোডাক্ট
+                #স্টকে আছে 56 টি প্রোডাক্ট
               </p>
               <p className='text-sm text-gray-600 font-semibold'>
                 *প্রতিটি প্রোডাক্টের সাথে পেয়ে যাচ্ছেন ১ বছরের ওয়ারেন্টি ।
