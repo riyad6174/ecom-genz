@@ -38,7 +38,7 @@ function Cart() {
 
   // Pricing state
   const [totalPrice, setTotalPrice] = useState(0);
-  const [shippingCharge, setShippingCharge] = useState(120);
+  const [shippingCharge, setShippingCharge] = useState(60);
   const [grandTotal, setGrandTotal] = useState(0);
 
   // Calculate totals based on cart items
