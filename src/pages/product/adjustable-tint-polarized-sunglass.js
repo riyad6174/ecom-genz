@@ -119,7 +119,7 @@ const ProductDetails = ({ initialProduct }) => {
   return (
     <>
       <Head>
-        <title>{product.title} | Buy Online in Bangladesh | GenZ Shop</title>
+        <title>{product.title} | Buy Online in Bangladesh | Sheii Shop</title>
         <meta
           name='description'
           content={`বাংলাদেশে সেরা দামে ${product.title} কিনুন। বৈশিষ্ট্যসমূহের মধ্যে রয়েছে ১-৯ স্তরের অ্যাডজাস্টেবল লেন্স, ইউভি সুরক্ষা, পোলারাইজড টেকনোলজি এবং আরও অনেক কিছু।`}
@@ -129,34 +129,34 @@ const ProductDetails = ({ initialProduct }) => {
           content={`Adjustable Tint Polarized Sunglass, সানগ্লাস বাংলাদেশ, polarized sunglasses price BD, UV protection glasses, men's round sunglasses, adjustable lenses`}
         />
         <meta name='robots' content='index, follow' />
-        <meta name='author' content='GenZ Shop' />
+        <meta name='author' content='Sheii Shop' />
         <link
           rel='canonical'
-          href={`https://www.genzshop.store/product/${product.slug}`}
+          href={`https://www.sheiishop.com/product/${product.slug}`}
         />
         <meta property='og:type' content='product' />
-        <meta property='og:title' content={`${product.title} | GenZ Shop`} />
+        <meta property='og:title' content={`${product.title} | Sheii Shop`} />
         <meta property='og:description' content={product.description} />
         <meta
           property='og:image'
           content={
             product.images?.[0] ||
-            'https://www.genzshop.store/assets/footer-logo.png'
+            'https://www.sheiishop.com/assets/footer-logo.png'
           }
         />
         <meta
           property='og:url'
-          content={`https://www.genzshop.store/product/${product.slug}`}
+          content={`https://www.sheiishop.com/product/${product.slug}`}
         />
-        <meta property='og:site_name' content='GenZ Shop' />
+        <meta property='og:site_name' content='Sheii Shop' />
         <meta name='twitter:card' content='summary_large_image' />
-        <meta name='twitter:title' content={`${product.title} | GenZ Shop`} />
+        <meta name='twitter:title' content={`${product.title} | Sheii Shop`} />
         <meta name='twitter:description' content={product.description} />
         <meta
           name='twitter:image'
           content={
             product.images?.[0] ||
-            'https://www.genzshop.store/assets/footer-logo.png'
+            'https://www.sheiishop.com/assets/footer-logo.png'
           }
         />
         <script
@@ -171,11 +171,11 @@ const ProductDetails = ({ initialProduct }) => {
               sku: product.id,
               brand: {
                 '@type': 'Brand',
-                name: 'GenZ Shop',
+                name: 'Sheii Shop',
               },
               offers: {
                 '@type': 'Offer',
-                url: `https://www.genzshop.store/product/${product.slug}`,
+                url: `https://www.sheiishop.com/product/${product.slug}`,
                 priceCurrency: 'BDT',
                 price: product.price,
                 availability: product.inStock
@@ -202,7 +202,7 @@ const ProductDetails = ({ initialProduct }) => {
             border-width: 2px;
           }
           .small-image-active {
-            border-color: #a4dd00;
+            border-color: #3b82f6;
             opacity: 1;
           }
           .small-image-inactive {
@@ -213,7 +213,7 @@ const ProductDetails = ({ initialProduct }) => {
             transition: all 0.2s ease-in-out;
           }
           .color-button-active {
-            border-color: #a4dd00;
+            border-color: #3b82f6;
             transform: scale(1.1);
           }
         `}</style>
@@ -276,7 +276,7 @@ const ProductDetails = ({ initialProduct }) => {
                     {product.variants.map((variant) => (
                       <div
                         key={variant.color}
-                        className={`border-2 flex items-center justify-center rounded-full p-1 cursor-pointer color-button ${
+                        className={`border-2  flex items-center justify-center rounded-full p-1 cursor-pointer color-button ${
                           selectedColor === variant.color
                             ? 'color-button-active'
                             : ''
@@ -286,15 +286,19 @@ const ProductDetails = ({ initialProduct }) => {
                         <button
                           className='w-[30px] h-[30px] rounded-full'
                           style={{
-                            backgroundColor: variant.color.toLowerCase(),
+                            backgroundColor:
+                              variant.color.toLowerCase() == 'golden'
+                                ? 'wheat'
+                                : variant.color.toLowerCase(),
                           }}
                         ></button>
+                        <span className='px-1'>{variant.color}</span>
                       </div>
                     ))}
                   </div>
                 </div>
                 <div className='flex items-center justify-start gap-2 text-md mb-6'>
-                  <span className='text-black font-bold text-xl'>
+                  <span className='text-blue-900 font-bold text-xl'>
                     ৳ {product.price.toFixed(2)}
                   </span>
                   <span className='text-gray-500 font-normal text-lg line-through'>
@@ -354,7 +358,7 @@ const ProductDetails = ({ initialProduct }) => {
                   </div>
                   <button
                     onClick={handleBuyNow}
-                    className='flex items-center bg-primary text-black justify-center gap-2 border border-primary px-6 py-[12px] rounded-md font-mont font-semibold text-sm'
+                    className='flex items-center bg-[#a4dd00] text-white justify-center gap-2 border border-blue-600 px-6 py-[12px] rounded-md font-mont font-semibold text-sm'
                     disabled={!product.inStock}
                   >
                     <span>{product.inStock ? 'Buy Now' : 'Out of Stock'}</span>
