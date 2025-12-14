@@ -1,5 +1,46 @@
 export const products = [
   {
+    id: 10,
+    title: 'Portable Electric Dental Water Flosser',
+    slug: 'portable-electric-dental-water-flosser',
+    model: 'Standard',
+    price: 1650.0,
+    originalPrice: 2150.0,
+    sectionType: 'hot',
+    inStock: true,
+    thumbnail: '/assets/product/flosser/4.jpg',
+    description:
+      'Experience deep cleaning with 80-120PSI water pressure, effectively removing plaque and bacteria while improving oral hygiene.',
+    images: [
+      '/assets/product/flosser/4.jpg',
+      '/assets/product/flosser/2.jpg',
+      '/assets/product/flosser/1.jpg',
+      '/assets/product/flosser/3.jpg',
+      // '/assets/product/flosser/4.jpg',
+    ],
+    variants: [{ color: 'White' }],
+  },
+  {
+    id: 9,
+    title: '6000mAh-Portable Baby feeding Bottle Warmer',
+    slug: 'portable-baby-feeding-bottle-warmer',
+    model: 'Black',
+    price: 2390.0,
+    originalPrice: 3050.0,
+    sectionType: 'hot',
+    inStock: true,
+    thumbnail: '/assets/product/warmer/main.jpg',
+    description:
+      'পোর্টেবল বেবি ফিডিং বটল ওয়ার্মার যা আপনার শিশুর দুধ বা খাবারকে নিরাপদ এবং সঠিক তাপমাত্রায় গরম রাখে।',
+    images: [
+      '/assets/product/warmer/main.jpg',
+      '/assets/product/warmer/1.jpg',
+      '/assets/product/warmer/2.jpg',
+      '/assets/product/warmer/3.jpg',
+    ],
+    variants: [{ color: '6000 mAh' }],
+  },
+  {
     id: 8,
     title: '20W, 35w, 45w, 65w Univarsal Travel Adapter ',
     slug: 'universal-travel-adapter',
