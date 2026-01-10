@@ -36,7 +36,7 @@ export const products = [
       '/assets/product/warmer/main.jpg',
       '/assets/product/warmer/1.jpg',
       '/assets/product/warmer/2.jpg',
-      '/assets/product/warmer/3.jpg',
+      '/assets/product/warmer/3.png',
     ],
     variants: [{ color: '6000 mAh' }],
   },
