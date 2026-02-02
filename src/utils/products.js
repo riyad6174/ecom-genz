@@ -1,5 +1,55 @@
 export const products = [
   {
+    id: 11,
+    title: '3D Human Body Torso Model for Kids | Learn Anatomy  | Genz Shop',
+    slug: '3d-human-body-torso-model-for-kids',
+    model: 'Standard',
+    price: 850.0,
+    originalPrice: 1250.0,
+    sectionType: 'hot',
+    inStock: true,
+    thumbnail: '/assets/product/anatomy/sk-5.jpg',
+    description:
+      'এই 3D হিউম্যান বডি টর্সো মডেল শিশুদের জন্য বিশেষভাবে তৈরি একটি শিক্ষামূলক খেলনা, যা মানবদেহের অঙ্গপ্রত্যঙ্গ ও গঠন সহজ ও আনন্দদায়কভাবে বোঝাতে সাহায্য করে। DIY অর্গান অ্যাসেম্বলি সিস্টেমের মাধ্যমে বাচ্চারা নিজেরাই অঙ্গগুলো জোড়া লাগাতে পারে, ফলে শেখা হয় আরও বাস্তব ও ইন্টারঅ্যাকটিভ।',
+    images: [
+      // '/assets/product/anatomy/sk-main.jpeg',
+      // '/assets/product/anatomy/sk-1.jpeg',
+      // '/assets/product/anatomy/sk-2.jpeg',
+      // '/assets/product/anatomy/sk-3.jpeg',
+      // '/assets/product/anatomy/rf-2.jpeg',
+      '/assets/product/anatomy/sk-5.jpg',
+      '/assets/product/anatomy/sk-6.jpg',
+      '/assets/product/anatomy/sk-7.jpg',
+      // '/assets/product/flo
+      // '/assets/product/inhaler/3.jpg',
+      // '/assets/product/flosser/4.jpg',
+    ],
+    variants: [],
+  },
+  {
+    id: 11,
+    title: 'Energy Booster Essential Oil Nasal Inhaler | Genz Shop',
+    slug: 'energy-booster-essential-oil-nasal-inhaler',
+    model: 'Standard',
+    price: 490.0,
+    originalPrice: 650.0,
+    sectionType: 'hot',
+    inStock: true,
+    thumbnail: '/assets/product/inhaler/rf-main.jpg',
+    description:
+      'আমাদের এসেনশিয়াল অয়েল সমৃদ্ধ ইনহেলার প্রাকৃতিকভাবে সাইনাসের অস্বস্তি, মাথার চাপ, টেনশন ও স্ট্রেস কমাতে সহায়তা করে। এতে ব্যবহৃত হয়েছে খাঁটি ও অর্গানিক এসেনশিয়াল অয়েল, যা নাকে প্রশান্তিদায়ক ও সতেজ অনুভূতি দেয়।',
+    images: [
+      '/assets/product/inhaler/rf-main.jpg',
+      '/assets/product/inhaler/rf-1.jpg',
+      // '/assets/product/inhaler/rf-2.jpeg',
+      '/assets/product/inhaler/rf-6.jpg',
+      // '/assets/product/flo
+      // '/assets/product/inhaler/3.jpg',
+      // '/assets/product/flosser/4.jpg',
+    ],
+    variants: [],
+  },
+  {
     id: 10,
     title: 'Portable Electric Dental Water Flosser',
     slug: 'portable-electric-dental-water-flosser',
