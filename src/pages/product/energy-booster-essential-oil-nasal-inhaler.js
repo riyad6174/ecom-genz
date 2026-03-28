@@ -36,15 +36,17 @@ const ProductDetails = ({ initialProduct }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [product, setProduct] = useState(initialProduct);
-  const [quantity, setQuantity] = useState(1);
+  const [variantQuantities, setVariantQuantities] = useState({});
   const [activeImage, setActiveImage] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
 
   useEffect(() => {
     if (initialProduct) {
       setProduct(initialProduct);
       setActiveImage(initialProduct.images[0] || '');
-      setSelectedColor(initialProduct.variants?.[0]?.type || '');
+      const defaultVariant = initialProduct.variants?.[0]?.type;
+      if (defaultVariant) {
+        setVariantQuantities({ [defaultVariant]: 1 });
+      }
 
       // GTM Data Layer Push (only on client-side)
       if (typeof window !== 'undefined') {
@@ -74,49 +76,57 @@ const ProductDetails = ({ initialProduct }) => {
     setActiveImage(image);
   };
 
-  const handleQuantityChange = (type) => {
-    if (type === 'increment' && quantity < 999) {
-      setQuantity(quantity + 1);
-    } else if (type === 'decrement' && quantity > 1) {
-      setQuantity(quantity - 1);
-    }
+  const handleVariantQuantityChange = (type, action) => {
+    setVariantQuantities((prev) => {
+      const current = prev[type] || 0;
+      let next = current;
+      if (action === 'increment' && current < 99) next += 1;
+      if (action === 'decrement' && current > 0) next -= 1;
+      return { ...prev, [type]: next };
+    });
   };
 
+  const totalQuantity = Object.values(variantQuantities).reduce((a, b) => a + b, 0);
+
   const handleBuyNow = () => {
-    if (product) {
+    if (product && totalQuantity > 0) {
       if (typeof window !== 'undefined') {
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
           event: 'add_to_cart',
           ecommerce: {
             currency: 'BDT',
-            value: product.price * quantity || 0,
-            items: [
-              {
+            value: product.price * totalQuantity || 0,
+            items: Object.entries(variantQuantities)
+              .filter(([_, qty]) => qty > 0)
+              .map(([variantType, qty]) => ({
                 item_id: product.id || 'unknown',
                 item_name: product.title || 'unknown',
                 price: product.price || 0,
                 original_price: product.originalPrice || 0,
                 item_category: 'Wellness',
-                item_variant: selectedColor || 'unknown',
-                quantity: quantity || 1,
-              },
-            ],
+                item_variant: variantType,
+                quantity: qty,
+              })),
           },
         });
       }
-      dispatch(
-        addToCart({
-          id: product.id,
-          title: product.title,
-          slug: product.slug,
-          price: product.price,
-          selectedColor,
-          variantKey: 'type',
-          quantity,
-          image: activeImage,
-        }),
-      );
+      Object.entries(variantQuantities).forEach(([variantType, qty]) => {
+        if (qty > 0) {
+          dispatch(
+            addToCart({
+              id: product.id,
+              title: product.title,
+              slug: product.slug,
+              price: product.price,
+              selectedColor: variantType,
+              variantKey: 'type',
+              quantity: qty,
+              image: activeImage,
+            }),
+          );
+        }
+      });
       router.push('/order');
     }
   };
@@ -253,24 +263,49 @@ const ProductDetails = ({ initialProduct }) => {
                   <span className='font-semibold text-gray-700 text-sm sm:text-base'>
                     ফ্লেভার নির্বাচন করুন
                   </span>
-                  <div className='grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3'>
+                  <div className='flex flex-col gap-3 mt-3'>
                     {product.variants.map((variant, index) => {
                       const value = variant.type;
-                      const isSelected = selectedColor === value;
+                      const qty = variantQuantities[value] || 0;
+                      const isSelected = qty > 0;
                       return (
                         <div
                           key={index}
-                          className={`border flex flex-row items-center justify-center gap-2 rounded-lg cursor-pointer px-3 py-2.5 transition-all duration-200 ${
-                            isSelected ? 'border-primary shadow-md opacity-100 ring-1 ring-primary' : 'border-gray-300 hover:border-gray-400 opacity-70 hover:opacity-100'
-                          } ${variantBgColors[value] || 'bg-gray-50'}`}
-                          onClick={() => setSelectedColor(value)}
+                          className={`border flex flex-row items-center justify-between rounded-lg px-4 py-3 transition-all duration-200 ${
+                            isSelected ? 'border-primary shadow-sm bg-primary/5' : 'border-gray-200 bg-gray-50'
+                          }`}
                         >
-                          <div className='flex items-center justify-center'>
-                            {variantIcons[value]}
+                          <div className='flex items-center gap-3'>
+                            <div className={`p-2 rounded-full ${variantBgColors[value] || 'bg-white'}`}>
+                              {variantIcons[value]}
+                            </div>
+                            <span className='text-sm sm:text-base font-semibold text-gray-800'>
+                              {value}
+                            </span>
                           </div>
-                          <span className='text-xs sm:text-sm font-semibold text-gray-800'>
-                            {value}
-                          </span>
+                          
+                          <div className='flex items-center border border-gray-300 rounded-lg bg-white overflow-hidden shadow-sm'>
+                            <button
+                              type='button'
+                              onClick={() => handleVariantQuantityChange(value, 'decrement')}
+                              className='hover:bg-gray-100 px-3 py-1.5 focus:outline-none flex items-center justify-center text-gray-700 transition-colors'
+                            >
+                              <span className='text-lg font-medium leading-none'>−</span>
+                            </button>
+                            <input
+                              type='text'
+                              value={qty}
+                              readOnly
+                              className='w-8 sm:w-10 text-center text-gray-900 text-sm font-semibold focus:outline-none border-x border-gray-300 py-1.5'
+                            />
+                            <button
+                              type='button'
+                              onClick={() => handleVariantQuantityChange(value, 'increment')}
+                              className='hover:bg-gray-100 px-3 py-1.5 focus:outline-none flex items-center justify-center text-gray-700 transition-colors'
+                            >
+                              <span className='text-lg font-medium leading-none'>+</span>
+                            </button>
+                          </div>
                         </div>
                       );
                     })}
@@ -278,59 +313,27 @@ const ProductDetails = ({ initialProduct }) => {
                 </div>
               )}
 
-              <div className='flex items-center justify-start gap-2 text-md mb-6'>
-                <span className='text-black font-bold text-lg sm:text-xl'>
-                  ৳ {product.price.toFixed(2)}
-                </span>
-                {product.originalPrice && (
-                  <span className='text-gray-500 font-normal text-base sm:text-lg line-through'>
-                    ৳ {product.originalPrice.toFixed(2)}
-                  </span>
-                )}
-              </div>
-              <div className='flex items-center justify-start gap-4 mb-6'>
-                <div className='flex items-center border border-gray-400 rounded-lg bg-white'>
-                  <button
-                    onClick={() => handleQuantityChange('decrement')}
-                    className='hover:bg-gray-200 rounded-l-lg py-2 px-3 sm:px-4 h-10 sm:h-11 focus:ring-gray-100 focus:ring-2 focus:outline-none'
-                  >
-                    <svg
-                      className='w-2 h-2 text-gray-900'
-                      fill='none'
-                      viewBox='0 0 18 2'
-                    >
-                      <path stroke='currentColor' strokeWidth='2' d='M1 1h16' />
-                    </svg>
-                  </button>
-                  <input
-                    type='text'
-                    value={quantity}
-                    readOnly
-                    className='h-10 sm:h-11 w-12 sm:w-16 text-center text-gray-900 text-sm'
-                  />
-                  <button
-                    onClick={() => handleQuantityChange('increment')}
-                    className='hover:bg-gray-200 rounded-r-lg py-2 px-3 sm:px-4 h-10 sm:h-11 focus:ring-gray-100 focus:ring-2 focus:outline-none'
-                  >
-                    <svg
-                      className='w-2 h-2 text-gray-900'
-                      fill='none'
-                      viewBox='0 0 18 18'
-                    >
-                      <path
-                        stroke='currentColor'
-                        strokeWidth='2'
-                        d='M9 1v16M1 9h16'
-                      />
-                    </svg>
-                  </button>
+              <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pt-4 border-t border-gray-200'>
+                <div className='flex flex-col gap-1'>
+                  <span className='text-gray-600 text-xs sm:text-sm font-semibold'>সর্বমোট মূল্য:</span>
+                  <div className='flex items-center gap-2'>
+                    <span className='text-black font-bold text-xl sm:text-2xl'>
+                      ৳ {(product.price * (totalQuantity || 1)).toFixed(2)}
+                    </span>
+                    {product.originalPrice && (
+                      <span className='text-gray-500 font-normal text-sm sm:text-base line-through'>
+                        ৳ {(product.originalPrice * (totalQuantity || 1)).toFixed(2)}
+                      </span>
+                    )}
+                  </div>
                 </div>
+                
                 <button
                   onClick={handleBuyNow}
-                  className='flex items-center bg-primary text-black justify-center gap-2 border border-primary px-4 sm:px-6 py-2 sm:py-3 rounded-md font-mont font-semibold text-sm'
-                  disabled={!product.inStock}
+                  className='flex-1 sm:flex-none flex items-center bg-primary text-black justify-center gap-2 border border-primary px-6 py-3 rounded-md font-mont font-bold text-sm sm:text-base transition-opacity hover:opacity-90'
+                  disabled={!product.inStock || totalQuantity === 0}
                 >
-                  <span>{product.inStock ? 'এখনই কিনুন' : 'স্টক নেই'}</span>
+                  <span>{product.inStock ? (totalQuantity > 0 ? `কিনুন (${totalQuantity} টি)` : 'ফ্লেভার নির্বাচন করুন') : 'স্টক নেই'}</span>
                 </button>
               </div>
               

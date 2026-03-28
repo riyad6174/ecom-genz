@@ -26,11 +26,6 @@ function Cart() {
     address: '',
   });
   const [errors, setErrors] = useState({});
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filteredDistricts, setFilteredDistricts] = useState(
-    districtsData.districts.slice(0, 5)
-  );
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [orderDetails, setOrderDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -64,27 +59,13 @@ function Cart() {
     validateField('phoneNumber', value || '');
   };
 
-  // Handle district selection
-  const handleDistrictSelect = (district) => {
-    setFormData({ ...formData, district });
-    setSearchTerm(district);
-    setIsDropdownOpen(false);
-    validateField('district', district);
-    const newShippingCharge = district === 'Dhaka' ? 60 : 120;
-    setShippingCharge(newShippingCharge);
-    setGrandTotal(totalPrice + newShippingCharge);
-  };
-
-  // Handle district search
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    setFormData({ ...formData, district: value });
-    setIsDropdownOpen(true);
-    const filtered = districtsData.districts.filter((district) =>
-      district.name.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredDistricts(filtered.slice(0, 5));
+  // Handle shipping area selection
+  const handleShippingSelect = (type) => {
+    const charge = type === 'Inside Dhaka' ? 60 : 120;
+    setFormData({ ...formData, district: type });
+    validateField('district', type);
+    setShippingCharge(charge);
+    setGrandTotal(totalPrice + charge);
   };
 
   // Validate individual field
@@ -112,9 +93,9 @@ function Cart() {
         break;
       case 'district':
         if (!value.trim()) {
-          newErrors.district = 'District is required';
-        } else if (!districtsData.districts.some((d) => d.name === value)) {
-          newErrors.district = 'Please select a valid district';
+          newErrors.district = 'Shipping area is required';
+        } else if (value !== 'Inside Dhaka' && value !== 'Outside Dhaka') {
+          newErrors.district = 'Please select a valid shipping area';
         } else {
           delete newErrors.district;
         }
@@ -144,9 +125,9 @@ function Cart() {
       newErrors.phoneNumber = 'Phone number is required';
     else if (!/^\+880\d{10}$/.test(formData.phoneNumber))
       newErrors.phoneNumber = 'Please enter a valid Bangladesh phone number';
-    if (!formData.district.trim()) newErrors.district = 'District is required';
-    else if (!districtsData.districts.some((d) => d.name === formData.district))
-      newErrors.district = 'Please select a valid district';
+    if (!formData.district.trim()) newErrors.district = 'Shipping area is required';
+    else if (formData.district !== 'Inside Dhaka' && formData.district !== 'Outside Dhaka')
+      newErrors.district = 'Please select a valid shipping area';
     if (!formData.address.trim()) newErrors.address = 'Address is required';
     else if (formData.address.length < 5)
       newErrors.address = 'Address must be at least 5 characters';
@@ -275,10 +256,6 @@ function Cart() {
     router.push('/');
   };
 
-  // Update filtered districts on mount
-  useEffect(() => {
-    setFilteredDistricts(districtsData.districts.slice(0, 5));
-  }, []);
 
   return (
     <div>
@@ -378,45 +355,35 @@ function Cart() {
                         </p>
                       )}
                     </div>
-                    {/* District */}
-                    <div className='relative'>
-                      <label
-                        htmlFor='district'
-                        className='block text-sm font-medium text-gray-700 mb-1'
-                      >
-                        District
+                    {/* Shipping Area */}
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700 mb-2'>
+                      Select Shipping Area
                       </label>
-                      <input
-                        type='text'
-                        id='district'
-                        name='district'
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        onFocus={() => setIsDropdownOpen(true)}
-                        placeholder='Select District'
-                        className='py-2 px-3 border w-full rounded-lg text-sm bg-white focus:ring-2 focus:ring-primary focus:border-primary'
-                      />
-                      {isDropdownOpen && (
-                        <ul className='absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 max-h-60 overflow-y-auto shadow-lg'>
-                          {filteredDistricts.length > 0 ? (
-                            filteredDistricts.map((district) => (
-                              <li
-                                key={district.id}
-                                onClick={() =>
-                                  handleDistrictSelect(district.name)
-                                }
-                                className='px-3 py-2 text-sm hover:bg-blue-100 cursor-pointer'
-                              >
-                                {district.name}
-                              </li>
-                            ))
-                          ) : (
-                            <li className='px-3 py-2 text-sm text-gray-500'>
-                              No districts found
-                            </li>
-                          )}
-                        </ul>
-                      )}
+                      <div className='flex flex-col sm:flex-row gap-3'>
+                        <button
+                          type='button'
+                          onClick={() => handleShippingSelect('Inside Dhaka')}
+                          className={`flex-1 py-3 px-4 rounded-lg border text-sm font-bold transition-all ${
+                            formData.district === 'Inside Dhaka'
+                              ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary'
+                              : 'border-gray-300 bg-white text-gray-700 hover:border-primary'
+                          }`}
+                        >
+                          ঢাকার ভেতরে (Inside Dhaka) - 60 Tk
+                        </button>
+                        <button
+                          type='button'
+                          onClick={() => handleShippingSelect('Outside Dhaka')}
+                          className={`flex-1 py-3 px-4 rounded-lg border text-sm font-bold transition-all ${
+                            formData.district === 'Outside Dhaka'
+                              ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary'
+                              : 'border-gray-300 bg-white text-gray-700 hover:border-primary'
+                          }`}
+                        >
+                          ঢাকার বাহিরে (Outside Dhaka) - 120 Tk
+                        </button>
+                      </div>
                       {errors.district && (
                         <p className='text-red-500 text-xs mt-1'>
                           {errors.district}
@@ -437,7 +404,7 @@ function Cart() {
                         name='address'
                         value={formData.address}
                         onChange={handleInputChange}
-                        placeholder='Thana, Road No, House No'
+                        placeholder='এলাকা, থানা, জেলার নাম লিখুন'
                         className='py-2 px-3 border w-full rounded-lg text-sm bg-white focus:ring-2 focus:ring-primary focus:border-primary'
                       />
                       {errors.address && (
