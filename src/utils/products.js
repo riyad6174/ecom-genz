@@ -47,7 +47,13 @@ export const products = [
       // '/assets/product/inhaler/3.jpg',
       // '/assets/product/flosser/4.jpg',
     ],
-    variants: [],
+    variants: [
+      { type: 'Grape' },
+      { type: 'Watermelon' },
+      { type: 'Mint' },
+      { type: 'Peace' },
+      { type: 'Lemon' },
+    ],
   },
   {
     id: 10,

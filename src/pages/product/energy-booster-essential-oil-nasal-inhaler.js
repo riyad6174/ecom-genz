@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { GoShareAndroid } from 'react-icons/go';
+import { GiGrapes, GiWatermelon, GiPeach } from 'react-icons/gi';
+import { FaLeaf, FaLemon, FaQuestionCircle } from 'react-icons/fa';
 import Navbar from '@/components/common/Navbar';
 import CustomSection from '@/components/layout/CustomSection';
 import { products } from '@/utils/products';
@@ -8,12 +10,27 @@ import { addToCart } from '@/store/cartSlice';
 import Footer from '@/components/common/Footer';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { FaQuestionCircle } from 'react-icons/fa';
 
 // Find the specific product for this page
 const productData = products.find(
   (p) => p.slug === 'energy-booster-essential-oil-nasal-inhaler',
 );
+
+const variantIcons = {
+  Grape: <GiGrapes className="text-purple-600 text-xl" />,
+  Watermelon: <GiWatermelon className="text-red-500 text-xl" />,
+  Mint: <FaLeaf className="text-green-500 text-xl" />,
+  Peace: <GiPeach className="text-orange-500 text-xl" />,
+  Lemon: <FaLemon className="text-yellow-500 text-xl" />,
+};
+
+const variantBgColors = {
+  Grape: 'bg-purple-100',
+  Watermelon: 'bg-red-100',
+  Mint: 'bg-green-100',
+  Peace: 'bg-orange-100',
+  Lemon: 'bg-yellow-100',
+};
 
 const ProductDetails = ({ initialProduct }) => {
   const dispatch = useDispatch();
@@ -21,11 +38,13 @@ const ProductDetails = ({ initialProduct }) => {
   const [product, setProduct] = useState(initialProduct);
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
 
   useEffect(() => {
     if (initialProduct) {
       setProduct(initialProduct);
       setActiveImage(initialProduct.images[0] || '');
+      setSelectedColor(initialProduct.variants?.[0]?.type || '');
 
       // GTM Data Layer Push (only on client-side)
       if (typeof window !== 'undefined') {
@@ -79,6 +98,7 @@ const ProductDetails = ({ initialProduct }) => {
                 price: product.price || 0,
                 original_price: product.originalPrice || 0,
                 item_category: 'Wellness',
+                item_variant: selectedColor || 'unknown',
                 quantity: quantity || 1,
               },
             ],
@@ -91,6 +111,8 @@ const ProductDetails = ({ initialProduct }) => {
           title: product.title,
           slug: product.slug,
           price: product.price,
+          selectedColor,
+          variantKey: 'type',
           quantity,
           image: activeImage,
         }),
@@ -225,6 +247,37 @@ const ProductDetails = ({ initialProduct }) => {
               <p className='text-gray-600 text-sm sm:text-base font-mont mb-4'>
                 {product.description}
               </p>
+
+              {product.variants && product.variants.length > 0 && (
+                <div className='mb-6'>
+                  <span className='font-semibold text-gray-700 text-sm sm:text-base'>
+                    ফ্লেভার নির্বাচন করুন
+                  </span>
+                  <div className='grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3'>
+                    {product.variants.map((variant, index) => {
+                      const value = variant.type;
+                      const isSelected = selectedColor === value;
+                      return (
+                        <div
+                          key={index}
+                          className={`border flex flex-row items-center justify-center gap-2 rounded-lg cursor-pointer px-3 py-2.5 transition-all duration-200 ${
+                            isSelected ? 'border-primary shadow-md opacity-100 ring-1 ring-primary' : 'border-gray-300 hover:border-gray-400 opacity-70 hover:opacity-100'
+                          } ${variantBgColors[value] || 'bg-gray-50'}`}
+                          onClick={() => setSelectedColor(value)}
+                        >
+                          <div className='flex items-center justify-center'>
+                            {variantIcons[value]}
+                          </div>
+                          <span className='text-xs sm:text-sm font-semibold text-gray-800'>
+                            {value}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               <div className='flex items-center justify-start gap-2 text-md mb-6'>
                 <span className='text-black font-bold text-lg sm:text-xl'>
                   ৳ {product.price.toFixed(2)}
@@ -280,6 +333,12 @@ const ProductDetails = ({ initialProduct }) => {
                   <span>{product.inStock ? 'এখনই কিনুন' : 'স্টক নেই'}</span>
                 </button>
               </div>
+              
+              <div className='mt-4 p-3 bg-red-50 border border-red-200 rounded-lg'>
+                <p className='text-sm sm:text-base text-red-600 font-semibold font-mont'>
+                  এটি সম্পুর্ণ ন্যাচারাল এসেনশিয়াল অয়েল সমৃদ্ধ একটি প্রোডাক্ট। ই-ভেপ বা ই-সিগারেট ভেবে ভুল করবেন না।
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -289,24 +348,24 @@ const ProductDetails = ({ initialProduct }) => {
         <div className='px-3 sm:px-4'>
           <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'>
             <img
-              src='https://m.media-amazon.com/images/I/71u6TT1RzsL._AC_UF1000,1000_QL80_.jpg'
+              src='/assets/product/inhaler/bull.avif'
               alt='Energy Booster Nasal Inhaler - Dual Stick Design'
-              className='w-full h-40 sm:h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
+              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
             />
             <img
-              src='https://m.media-amazon.com/images/I/71e+Qq-XGcL._AC_UF1000,1000_QL80_.jpg'
+              src='/assets/product/inhaler/grape.avif'
               alt='Portable Essential Oil Inhaler with Cap'
-              className='w-full h-40 sm:h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
+              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
             />
             <img
               src='/assets/product/inhaler/rf-7.png'
               alt='Aromatherapy Nasal Inhaler - Peppermint Style'
-              className='w-full h-40 sm:h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
+              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
             />
             <img
               src='/assets/product/inhaler/rf-9.png'
               alt='Refreshing Nasal Inhaler Pack - Natural Oils'
-              className='w-full h-40 sm:h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
+              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
             />
           </div>
           {/* Product Description */}
