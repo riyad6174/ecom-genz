@@ -404,6 +404,28 @@ const ProductDetails = ({ initialProduct }) => {
               <li>ফ্লেভার: কাস্টমাইজেবল (নির্বাচন অনুযায়ী)</li>
             </ul>
           </div>
+          <div className='mt-4 flex flex-col items-center justify-center'>
+                   <img
+              src='/assets/product/inhaler/model.jpg'
+              alt='Aromatherapy Nasal Inhaler - Peppermint Style'
+              className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
+            />
+                   <img
+              src='/assets/product/inhaler/driving.jpg'
+              alt='Aromatherapy Nasal Inhaler - Peppermint Style'
+              className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
+            />
+                   <img
+              src='/assets/product/inhaler/motion.jpg'
+              alt='Aromatherapy Nasal Inhaler - Peppermint Style'
+              className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
+            />
+                   <img
+              src='/assets/product/inhaler/refresh.jpg'
+              alt='Aromatherapy Nasal Inhaler - Peppermint Style'
+              className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
+            />
+          </div>
 
           {/* FAQ Section */}
           <div className='bg-white p-4 sm:p-5 rounded-lg mt-4 sm:mt-6'>
