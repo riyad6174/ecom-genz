@@ -271,8 +271,13 @@ const ProductDetails = ({ initialProduct }) => {
                       return (
                         <div
                           key={index}
+                          onClick={() => {
+                            if (!isSelected) {
+                              handleVariantQuantityChange(value, 'increment');
+                            }
+                          }}
                           className={`border flex flex-row items-center justify-between rounded-lg px-4 py-3 transition-all duration-200 ${
-                            isSelected ? 'border-primary shadow-sm bg-primary/5' : 'border-gray-200 bg-gray-50'
+                            isSelected ? 'border-primary shadow-sm bg-primary/5' : 'border-gray-200 bg-gray-50 cursor-pointer hover:border-primary/50'
                           }`}
                         >
                           <div className='flex items-center gap-3'>
@@ -284,7 +289,10 @@ const ProductDetails = ({ initialProduct }) => {
                             </span>
                           </div>
                           
-                          <div className='flex items-center border border-gray-300 rounded-lg bg-white overflow-hidden shadow-sm'>
+                          <div 
+                            className='flex items-center border border-gray-300 rounded-lg bg-white overflow-hidden shadow-sm'
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <button
                               type='button'
                               onClick={() => handleVariantQuantityChange(value, 'decrement')}
