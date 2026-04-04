@@ -53,6 +53,7 @@ export const products = [
       { type: 'Mint' },
       { type: 'Peace' },
       { type: 'Lemon' },
+      { type: 'RedBull' },
     ],
   },
   {

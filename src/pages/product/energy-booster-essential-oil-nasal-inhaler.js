@@ -10,6 +10,7 @@ import { addToCart } from '@/store/cartSlice';
 import Footer from '@/components/common/Footer';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { SiRedbull } from 'react-icons/si';
 
 // Find the specific product for this page
 const productData = products.find(
@@ -17,11 +18,12 @@ const productData = products.find(
 );
 
 const variantIcons = {
-  Grape: <GiGrapes className="text-purple-600 text-xl" />,
-  Watermelon: <GiWatermelon className="text-red-500 text-xl" />,
-  Mint: <FaLeaf className="text-green-500 text-xl" />,
-  Peace: <GiPeach className="text-orange-500 text-xl" />,
-  Lemon: <FaLemon className="text-yellow-500 text-xl" />,
+  Grape: <GiGrapes className='text-purple-600 text-xl' />,
+  Watermelon: <GiWatermelon className='text-red-500 text-xl' />,
+  Mint: <FaLeaf className='text-green-500 text-xl' />,
+  Peace: <GiPeach className='text-orange-500 text-xl' />,
+  Lemon: <FaLemon className='text-yellow-500 text-xl' />,
+  RedBull: <SiRedbull className='text-red-800 text-xl' />,
 };
 
 const variantBgColors = {
@@ -30,6 +32,7 @@ const variantBgColors = {
   Mint: 'bg-green-100',
   Peace: 'bg-orange-100',
   Lemon: 'bg-yellow-100',
+  RedBull: 'bg-red-100',
 };
 
 const ProductDetails = ({ initialProduct }) => {
@@ -86,7 +89,10 @@ const ProductDetails = ({ initialProduct }) => {
     });
   };
 
-  const totalQuantity = Object.values(variantQuantities).reduce((a, b) => a + b, 0);
+  const totalQuantity = Object.values(variantQuantities).reduce(
+    (a, b) => a + b,
+    0,
+  );
 
   const handleBuyNow = () => {
     if (product && totalQuantity > 0) {
@@ -277,28 +283,35 @@ const ProductDetails = ({ initialProduct }) => {
                             }
                           }}
                           className={`border flex flex-row items-center justify-between rounded-lg px-4 py-3 transition-all duration-200 ${
-                            isSelected ? 'border-primary shadow-sm bg-primary/5' : 'border-gray-200 bg-gray-50 cursor-pointer hover:border-primary/50'
+                            isSelected
+                              ? 'border-primary shadow-sm bg-primary/5'
+                              : 'border-gray-200 bg-gray-50 cursor-pointer hover:border-primary/50'
                           }`}
                         >
                           <div className='flex items-center gap-3'>
-                            <div className={`p-2 rounded-full ${variantBgColors[value] || 'bg-white'}`}>
+                            <div
+                              className={`p-2 rounded-full ${variantBgColors[value] || 'bg-white'}`}
+                            >
                               {variantIcons[value]}
                             </div>
                             <span className='text-sm sm:text-base font-semibold text-gray-800'>
                               {value}
                             </span>
                           </div>
-                          
-                          <div 
+                          <div
                             className='flex items-center border border-gray-300 rounded-lg bg-white overflow-hidden shadow-sm'
                             onClick={(e) => e.stopPropagation()}
                           >
                             <button
                               type='button'
-                              onClick={() => handleVariantQuantityChange(value, 'decrement')}
+                              onClick={() =>
+                                handleVariantQuantityChange(value, 'decrement')
+                              }
                               className='hover:bg-gray-100 px-3 py-1.5 focus:outline-none flex items-center justify-center text-gray-700 transition-colors'
                             >
-                              <span className='text-lg font-medium leading-none'>−</span>
+                              <span className='text-lg font-medium leading-none'>
+                                −
+                              </span>
                             </button>
                             <input
                               type='text'
@@ -308,10 +321,14 @@ const ProductDetails = ({ initialProduct }) => {
                             />
                             <button
                               type='button'
-                              onClick={() => handleVariantQuantityChange(value, 'increment')}
+                              onClick={() =>
+                                handleVariantQuantityChange(value, 'increment')
+                              }
                               className='hover:bg-gray-100 px-3 py-1.5 focus:outline-none flex items-center justify-center text-gray-700 transition-colors'
                             >
-                              <span className='text-lg font-medium leading-none'>+</span>
+                              <span className='text-lg font-medium leading-none'>
+                                +
+                              </span>
                             </button>
                           </div>
                         </div>
@@ -323,31 +340,43 @@ const ProductDetails = ({ initialProduct }) => {
 
               <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pt-4 border-t border-gray-200'>
                 <div className='flex flex-col gap-1'>
-                  <span className='text-gray-600 text-xs sm:text-sm font-semibold'>সর্বমোট মূল্য:</span>
+                  <span className='text-gray-600 text-xs sm:text-sm font-semibold'>
+                    সর্বমোট মূল্য:
+                  </span>
                   <div className='flex items-center gap-2'>
                     <span className='text-black font-bold text-xl sm:text-2xl'>
                       ৳ {(product.price * (totalQuantity || 1)).toFixed(2)}
                     </span>
                     {product.originalPrice && (
                       <span className='text-gray-500 font-normal text-sm sm:text-base line-through'>
-                        ৳ {(product.originalPrice * (totalQuantity || 1)).toFixed(2)}
+                        ৳{' '}
+                        {(product.originalPrice * (totalQuantity || 1)).toFixed(
+                          2,
+                        )}
                       </span>
                     )}
                   </div>
                 </div>
-                
+
                 <button
                   onClick={handleBuyNow}
                   className='flex-1 sm:flex-none flex items-center bg-primary text-black justify-center gap-2 border border-primary px-6 py-3 rounded-md font-mont font-bold text-sm sm:text-base transition-opacity hover:opacity-90'
                   disabled={!product.inStock || totalQuantity === 0}
                 >
-                  <span>{product.inStock ? (totalQuantity > 0 ? `কিনুন (${totalQuantity} টি)` : 'ফ্লেভার নির্বাচন করুন') : 'স্টক নেই'}</span>
+                  <span>
+                    {product.inStock
+                      ? totalQuantity > 0
+                        ? `কিনুন (${totalQuantity} টি)`
+                        : 'ফ্লেভার নির্বাচন করুন'
+                      : 'স্টক নেই'}
+                  </span>
                 </button>
               </div>
-              
+
               <div className='mt-4 p-3 bg-red-50 border border-red-200 rounded-lg'>
                 <p className='text-sm sm:text-base text-red-600 font-semibold font-mont'>
-                  এটি সম্পুর্ণ ন্যাচারাল এসেনশিয়াল অয়েল সমৃদ্ধ একটি প্রোডাক্ট। ই-ভেপ বা ই-সিগারেট ভেবে ভুল করবেন না।
+                  এটি সম্পুর্ণ ন্যাচারাল এসেনশিয়াল অয়েল সমৃদ্ধ একটি প্রোডাক্ট।
+                  ই-ভেপ বা ই-সিগারেট ভেবে ভুল করবেন না।
                 </p>
               </div>
             </div>
@@ -416,22 +445,22 @@ const ProductDetails = ({ initialProduct }) => {
             </ul>
           </div>
           <div className='mt-4 flex flex-col items-center justify-center'>
-                   <img
+            <img
               src='/assets/product/inhaler/model.jpg'
               alt='Aromatherapy Nasal Inhaler - Peppermint Style'
               className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
             />
-                   <img
+            <img
               src='/assets/product/inhaler/driving.jpg'
               alt='Aromatherapy Nasal Inhaler - Peppermint Style'
               className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
             />
-                   <img
+            <img
               src='/assets/product/inhaler/motion.jpg'
               alt='Aromatherapy Nasal Inhaler - Peppermint Style'
               className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
             />
-                   <img
+            <img
               src='/assets/product/inhaler/refresh.jpg'
               alt='Aromatherapy Nasal Inhaler - Peppermint Style'
               className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
