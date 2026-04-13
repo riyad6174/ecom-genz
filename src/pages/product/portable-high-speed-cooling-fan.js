@@ -24,7 +24,7 @@ const StarIcon = ({ filled }) => (
 
 const REVIEW_IMGS = [
   '/assets/product/fan/review1.jpeg',
-  '/assets/product/fan/review2.jpeg',
+  // '/assets/product/fan/review2.jpeg',
   '/assets/product/fan/review3.jpeg',
   '/assets/product/fan/review4.jpeg',
   '/assets/product/fan/review5.jpeg',
@@ -33,7 +33,7 @@ const REVIEW_IMGS = [
 const DESC_IMGS = [
   'desc-1.jpeg',
   'desc-2.jpeg',
-  'desc3.jpeg',
+  'desc3.jpg',
   'desc-4.jpeg',
   'desc-5.jpeg',
   'desc-6.jpeg',
@@ -590,7 +590,7 @@ const ProductDetails = ({ initialProduct }) => {
                   {[
                     { icon: '🚀', text: 'দ্রুত ডেলিভারি' },
                     { icon: '🔒', text: 'ক্যাশ অন ডেলিভারি' },
-                    { icon: '🔄', text: 'সহজ রিটার্ন' },
+                    { icon: '🔄', text: '৬ মাসের সার্ভিস ওয়ারেন্টি ' },
                     { icon: '🎁', text: 'বিশেষ অফার' },
                   ].map((p) => (
                     <div key={p.text} className='flex items-center gap-2'>
@@ -762,7 +762,7 @@ const ProductDetails = ({ initialProduct }) => {
                 { l: 'চার্জিং পোর্ট', v: 'USB-C' },
                 { l: 'স্পিড রেঞ্জ', v: '০ – ২০০ লেভেল' },
                 { l: 'রঙের বিকল্প', v: 'কালো, সাদা, ধূসর, গোলাপি, নীল, বেইজ' },
-                { l: 'গ্যারান্টি', v: '৩০ দিনের রিটার্ন পলিসি' },
+                // { l: 'গ্যারান্টি', v: '৩০ দিনের রিটার্ন পলিসি' },
               ].map((row, i) => (
                 <div
                   key={row.l}
