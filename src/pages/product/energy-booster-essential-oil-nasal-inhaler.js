@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { GoShareAndroid } from 'react-icons/go';
 import { GiGrapes, GiWatermelon, GiPeach } from 'react-icons/gi';
 import { FaLeaf, FaLemon, FaQuestionCircle } from 'react-icons/fa';
 import Navbar from '@/components/common/Navbar';
@@ -12,7 +11,6 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { SiRedbull } from 'react-icons/si';
 
-// Find the specific product for this page
 const productData = products.find(
   (p) => p.slug === 'energy-booster-essential-oil-nasal-inhaler',
 );
@@ -35,6 +33,15 @@ const variantBgColors = {
   RedBull: 'bg-red-100',
 };
 
+// Bundle pricing tiers based on total quantity
+const BUNDLE_PRICES = { 1: 490, 2: 800, 3: 999, 4: 1200, 5: 1400, 6: 1600 };
+
+const getBundlePrice = (qty) => {
+  if (qty <= 0) return 0;
+  if (qty <= 6) return BUNDLE_PRICES[qty];
+  return 1600 + (qty - 6) * 490;
+};
+
 const ProductDetails = ({ initialProduct }) => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -51,7 +58,6 @@ const ProductDetails = ({ initialProduct }) => {
         setVariantQuantities({ [defaultVariant]: 1 });
       }
 
-      // GTM Data Layer Push (only on client-side)
       if (typeof window !== 'undefined') {
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
@@ -94,53 +100,64 @@ const ProductDetails = ({ initialProduct }) => {
     0,
   );
 
+  const bundlePrice = getBundlePrice(totalQuantity);
+  const originalTotal = totalQuantity * (product?.price || 490);
+  const savings = originalTotal - bundlePrice;
+  const savingsPercent =
+    originalTotal > 0 ? Math.round((savings / originalTotal) * 100) : 0;
+
   const handleBuyNow = () => {
-    if (product && totalQuantity > 0) {
-      if (typeof window !== 'undefined') {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: 'add_to_cart',
-          ecommerce: {
-            currency: 'BDT',
-            value: product.price * totalQuantity || 0,
-            items: Object.entries(variantQuantities)
-              .filter(([_, qty]) => qty > 0)
-              .map(([variantType, qty]) => ({
-                item_id: product.id || 'unknown',
-                item_name: product.title || 'unknown',
-                price: product.price || 0,
-                original_price: product.originalPrice || 0,
-                item_category: 'Wellness',
-                item_variant: variantType,
-                quantity: qty,
-              })),
-          },
-        });
-      }
-      Object.entries(variantQuantities).forEach(([variantType, qty]) => {
-        if (qty > 0) {
-          dispatch(
-            addToCart({
-              id: product.id,
-              title: product.title,
-              slug: product.slug,
-              price: product.price,
-              selectedColor: variantType,
-              variantKey: 'type',
-              quantity: qty,
-              image: activeImage,
-            }),
-          );
-        }
+    if (!product || totalQuantity === 0) return;
+
+    // Build a summary of selected flavors for display
+    const selectedFlavors = Object.entries(variantQuantities)
+      .filter(([, qty]) => qty > 0)
+      .map(([type, qty]) => `${type}×${qty}`)
+      .join(', ');
+
+    if (typeof window !== 'undefined') {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'add_to_cart',
+        ecommerce: {
+          currency: 'BDT',
+          value: bundlePrice,
+          items: [
+            {
+              item_id: product.id || 'unknown',
+              item_name: product.title || 'unknown',
+              price: bundlePrice,
+              original_price: originalTotal,
+              item_category: 'Wellness',
+              item_variant: selectedFlavors,
+              quantity: 1,
+            },
+          ],
+        },
       });
-      router.push('/order');
     }
+
+    // Dispatch a single bundle cart item so order total is always correct
+    dispatch(
+      addToCart({
+        id: product.id,
+        title: product.title,
+        slug: product.slug,
+        price: bundlePrice,
+        selectedColor: selectedFlavors,
+        variantKey: 'type',
+        quantity: 1,
+        image: activeImage,
+      }),
+    );
+
+    router.push('/order');
   };
 
   if (!product) {
     return (
       <div className='text-center py-10 text-gray-600 font-mont text-lg'>
-        পণ্য খুঁজে পাওয়া যায়নি
+        পণ্য খুঁজে পাওয়া যায়নি
       </div>
     );
   }
@@ -160,7 +177,7 @@ const ProductDetails = ({ initialProduct }) => {
     {
       question: 'এতে কি কোনো পার্শ্বপ্রতিক্রিয়া আছে?',
       answer:
-        'সাধারণত নিরাপদ, কারণ এতে শুধুমাত্র খাঁটি প্রাকৃতিক এসেনশিয়াল অয়েল ব্যবহার করা হয়েছে। তবে অ্যালার্জি থাকলে (যেমন: নির্দিষ্ট তেলের প্রতি) ব্যবহারের আগে টেস্ট করে নিন। অতিরিক্ত ব্যবহারে নাকের জ্বালা হতে পারে। গর্ভবতী বা শিশুদের ক্ষেত্রে ডাক্তারের পরামর্শ নিন।',
+        'সাধারণত নিরাপদ, কারণ এতে শুধুমাত্র খাঁটি প্রাকৃতিক এসেনশিয়াল অয়েল ব্যবহার করা হয়েছে। তবে অ্যালার্জি থাকলে ব্যবহারের আগে টেস্ট করে নিন। গর্ভবতী বা শিশুদের ক্ষেত্রে ডাক্তারের পরামর্শ নিন।',
     },
     {
       question: 'কীভাবে সঠিকভাবে ব্যবহার করব?',
@@ -170,7 +187,7 @@ const ProductDetails = ({ initialProduct }) => {
     {
       question: 'এটি কি শিশুদের জন্য নিরাপদ?',
       answer:
-        'প্রাপ্তবয়স্কদের জন্য ডিজাইন করা। ১২ বছরের নিচের শিশুদের ক্ষেত্রে ব্যবহারের আগে ডাক্তারের পরামর্শ নেওয়া উচিত, কারণ এসেনশিয়াল অয়েল শিশুদের জন্য বেশি শক্তিশালী হতে পারে।',
+        'প্রাপ্তবয়স্কদের জন্য ডিজাইন করা। ১২ বছরের নিচের শিশুদের ক্ষেত্রে ব্যবহারের আগে ডাক্তারের পরামর্শ নেওয়া উচিত।',
     },
   ];
 
@@ -198,7 +215,9 @@ const ProductDetails = ({ initialProduct }) => {
         <meta property='og:image' content={product.images[0]} />
         <meta name='twitter:card' content='summary_large_image' />
       </Head>
+
       <Navbar />
+
       <div className='py-6 sm:py-8 container mx-auto px-4 sm:px-6 lg:px-8'>
         <style jsx>{`
           .image-transition {
@@ -224,9 +243,10 @@ const ProductDetails = ({ initialProduct }) => {
             border-color: transparent;
           }
         `}</style>
+
         <div className='bg-white py-4 sm:py-6 rounded-xl shadow-lg'>
           <div className='flex flex-col lg:flex-row gap-4 sm:gap-6'>
-            {/* Image Section – Updated grid */}
+            {/* Image Section */}
             <div className='w-full lg:w-3/5 px-4'>
               <div className='grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4'>
                 <div className='col-span-1 sm:col-span-2'>
@@ -236,7 +256,6 @@ const ProductDetails = ({ initialProduct }) => {
                     alt={product.title}
                   />
                 </div>
-                {/* Thumbnails – 3 in row on sm+, single column on mobile */}
                 <div className='grid grid-cols-3 sm:grid-cols-1 gap-3 sm:gap-4'>
                   {product.images.map((image, index) => (
                     <img
@@ -257,15 +276,19 @@ const ProductDetails = ({ initialProduct }) => {
 
             {/* Product Details */}
             <div className='w-full lg:w-2/5 px-4 sm:px-6 py-4'>
-              <h2 className='text-lg sm:text-xl lg:text-2xl font-semibold font-mont text-gray-800 mb-2 sm:mb-4'>
+              <h2 className='text-lg sm:text-xl lg:text-2xl font-semibold font-mont text-gray-800 mb-2 sm:mb-3'>
                 {product.title}
               </h2>
               <p className='text-gray-600 text-sm sm:text-base font-mont mb-4'>
                 {product.description}
               </p>
+              <p className='bg-yellow-200 font-bold my-3'>
+                একাধিক অর্ডারে পাচ্ছেন ডিস্কাউন্ট!
+              </p>
 
+              {/* Variant selector */}
               {product.variants && product.variants.length > 0 && (
-                <div className='mb-6'>
+                <div className='mb-5'>
                   <span className='font-semibold text-gray-700 text-sm sm:text-base'>
                     ফ্লেভার নির্বাচন করুন
                   </span>
@@ -338,44 +361,66 @@ const ProductDetails = ({ initialProduct }) => {
                 </div>
               )}
 
-              <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pt-4 border-t border-gray-200'>
-                <div className='flex flex-col gap-1'>
-                  <span className='text-gray-600 text-xs sm:text-sm font-semibold'>
-                    সর্বমোট মূল্য:
-                  </span>
-                  <div className='flex items-center gap-2'>
-                    <span className='text-black font-bold text-xl sm:text-2xl'>
-                      ৳ {(product.price * (totalQuantity || 1)).toFixed(2)}
+              {/* Bundle price summary */}
+              <div className='pt-4 border-t border-gray-200 mb-4'>
+                {totalQuantity > 0 ? (
+                  <div className='flex flex-col gap-1 mb-3'>
+                    <span className='text-gray-600 text-xs sm:text-sm font-semibold'>
+                      সর্বমোট মূল্য ({totalQuantity}টি পণ্য):
                     </span>
-                    {product.originalPrice && (
-                      <span className='text-gray-500 font-normal text-sm sm:text-base line-through'>
-                        ৳{' '}
-                        {(product.originalPrice * (totalQuantity || 1)).toFixed(
-                          2,
-                        )}
+                    <div className='flex items-center gap-2 flex-wrap'>
+                      <span className='text-black font-bold text-xl sm:text-2xl'>
+                        ৳ {bundlePrice.toFixed(0)}
                       </span>
+                      {savings > 0 && (
+                        <>
+                          <span className='text-gray-400 font-normal text-sm sm:text-base line-through'>
+                            ৳ {originalTotal.toFixed(0)}
+                          </span>
+                          <span className='bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full'>
+                            {savingsPercent}% সাশ্রয়
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {savings > 0 && (
+                      <p className='text-green-600 text-xs font-semibold'>
+                        আপনি ৳{savings.toFixed(0)} সাশ্রয় করছেন!
+                      </p>
                     )}
                   </div>
-                </div>
+                ) : (
+                  <div className='flex items-center gap-2 mb-3'>
+                    <span className='text-black font-bold text-xl sm:text-2xl'>
+                      ৳ {product.price.toFixed(0)}
+                    </span>
+                    <span className='text-gray-500 font-normal text-sm line-through'>
+                      ৳ {product.originalPrice.toFixed(0)}
+                    </span>
+                    <span className='text-xs text-gray-500 font-mont'>
+                      (প্রতিটির মূল্য)
+                    </span>
+                  </div>
+                )}
 
                 <button
                   onClick={handleBuyNow}
-                  className='flex-1 sm:flex-none flex items-center bg-primary text-black justify-center gap-2 border border-primary px-6 py-3 rounded-md font-mont font-bold text-sm sm:text-base transition-opacity hover:opacity-90'
+                  className='w-full flex items-center bg-primary text-black justify-center gap-2 border border-primary px-6 py-3 rounded-md font-mont font-bold text-sm sm:text-base transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed'
                   disabled={!product.inStock || totalQuantity === 0}
                 >
                   <span>
                     {product.inStock
                       ? totalQuantity > 0
-                        ? `কিনুন (${totalQuantity} টি)`
+                        ? `অর্ডার করুন (${totalQuantity}টি) — ৳${bundlePrice}`
                         : 'ফ্লেভার নির্বাচন করুন'
                       : 'স্টক নেই'}
                   </span>
                 </button>
               </div>
 
-              <div className='mt-4 p-3 bg-red-50 border border-red-200 rounded-lg'>
+              <div className='mt-2 p-3 bg-red-50 border border-red-200 rounded-lg'>
                 <p className='text-sm sm:text-base text-red-600 font-semibold font-mont'>
-                  এটি সম্পুর্ণ ন্যাচারাল এসেনশিয়াল অয়েল সমৃদ্ধ একটি প্রোডাক্ট।
+                  এটি সম্পুর্ণ ন্যাচারাল এসেনশিয়াল অয়েল সমৃদ্ধ একটি প্রোডাক্ট।
                   ই-ভেপ বা ই-সিগারেট ভেবে ভুল করবেন না।
                 </p>
               </div>
@@ -386,6 +431,7 @@ const ProductDetails = ({ initialProduct }) => {
 
       <CustomSection>
         <div className='px-3 sm:px-4'>
+          {/* Product images grid */}
           <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'>
             <img
               src='/assets/product/inhaler/bull.avif'
@@ -408,6 +454,120 @@ const ProductDetails = ({ initialProduct }) => {
               className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
             />
           </div>
+
+          {/* ── Bundle Offer Banner ── */}
+          <div className='mt-6 rounded-2xl overflow-hidden shadow-lg border border-green-100'>
+            {/* Header */}
+            <div
+              className='px-6 py-4 text-center'
+              style={{
+                background: 'linear-gradient(135deg, #16a34a, #15803d)',
+              }}
+            >
+              <p className='text-white text-xs font-bold uppercase tracking-widest mb-1'>
+                🎉 একসাথে বেশি কিনুন — বেশি সাশ্রয় করুন!
+              </p>
+              <h3 className='text-white text-xl sm:text-2xl font-extrabold'>
+                একাধিক ফ্লেভার কিনলে পাবেন বিশেষ ছাড়
+              </h3>
+            </div>
+
+            {/* Tier table */}
+            <div className='bg-white divide-y divide-gray-100'>
+              {[
+                {
+                  qty: 1,
+                  label: '১টি পণ্য',
+                  price: 490,
+                  original: 490,
+                  badge: null,
+                },
+                {
+                  qty: 2,
+                  label: '২টি পণ্য',
+                  price: 800,
+                  original: 980,
+                  badge: '১৮% ছাড়',
+                },
+                {
+                  qty: 3,
+                  label: '৩টি পণ্য',
+                  price: 999,
+                  original: 1470,
+                  badge: '৩২% ছাড়',
+                },
+                {
+                  qty: 4,
+                  label: '৪টি পণ্য',
+                  price: 1200,
+                  original: 1960,
+                  badge: '৩৯% ছাড়',
+                },
+                {
+                  qty: 5,
+                  label: '৫টি পণ্য',
+                  price: 1400,
+                  original: 2450,
+                  badge: '৪৩% ছাড়',
+                },
+                {
+                  qty: 6,
+                  label: '৬টি পণ্য (সব ফ্লেভার)',
+                  price: 1600,
+                  original: 2940,
+                  badge: '৪৬% ছাড়',
+                  highlight: true,
+                },
+              ].map((tier) => (
+                <div
+                  key={tier.qty}
+                  className={`flex items-center justify-between px-5 py-3 ${
+                    tier.highlight ? 'bg-green-50' : ''
+                  }`}
+                >
+                  <div className='flex items-center gap-3'>
+                    <span className='text-2xl'>
+                      {tier.qty === 1 ? '🟢' : tier.qty <= 3 ? '🟡' : '🔥'}
+                    </span>
+                    <div>
+                      <p className='font-bold text-gray-800 text-sm sm:text-base'>
+                        {tier.label}
+                        {tier.highlight && (
+                          <span className='ml-2 text-green-600 text-xs'>
+                            (সেরা ডিল!)
+                          </span>
+                        )}
+                      </p>
+                      {tier.original > tier.price && (
+                        <p className='text-gray-400 text-xs line-through'>
+                          আগের দাম: ৳{tier.original}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-2 sm:gap-3'>
+                    <span className='font-extrabold text-green-700 text-base sm:text-lg'>
+                      ৳{tier.price}
+                    </span>
+                    {tier.badge && (
+                      <span className='bg-rose-100 text-rose-600 text-xs font-bold px-2 py-0.5 rounded-full hidden sm:inline'>
+                        {tier.badge}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Footer note */}
+            <div className='bg-green-50 px-6 py-3 text-center border-t border-green-100'>
+              <p className='text-green-700 text-sm font-semibold'>
+                ✅ যেকোনো ফ্লেভার মিশিয়ে নিন — ডিসকাউন্ট মোট পরিমাণের উপর
+                প্রযোজ্য
+              </p>
+            </div>
+          </div>
+
           {/* Product Description */}
           <div className='bg-white p-2 mt-4 sm:p-5 rounded-lg'>
             <h2 className='text-lg sm:text-xl font-semibold mb-3'>
@@ -444,25 +604,26 @@ const ProductDetails = ({ initialProduct }) => {
               <li>ফ্লেভার: কাস্টমাইজেবল (নির্বাচন অনুযায়ী)</li>
             </ul>
           </div>
+
           <div className='mt-4 flex flex-col items-center justify-center'>
             <img
               src='/assets/product/inhaler/model.jpg'
-              alt='Aromatherapy Nasal Inhaler - Peppermint Style'
+              alt='Aromatherapy Nasal Inhaler - Model'
               className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
             />
             <img
               src='/assets/product/inhaler/driving.jpg'
-              alt='Aromatherapy Nasal Inhaler - Peppermint Style'
+              alt='Aromatherapy Nasal Inhaler - Driving'
               className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
             />
             <img
               src='/assets/product/inhaler/motion.jpg'
-              alt='Aromatherapy Nasal Inhaler - Peppermint Style'
+              alt='Aromatherapy Nasal Inhaler - Motion'
               className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
             />
             <img
               src='/assets/product/inhaler/refresh.jpg'
-              alt='Aromatherapy Nasal Inhaler - Peppermint Style'
+              alt='Aromatherapy Nasal Inhaler - Refresh'
               className='w-full h-full object-cover shadow-md hover:shadow-lg transition-shadow'
             />
           </div>
@@ -489,6 +650,7 @@ const ProductDetails = ({ initialProduct }) => {
           </div>
         </div>
       </CustomSection>
+
       <Footer />
     </>
   );
