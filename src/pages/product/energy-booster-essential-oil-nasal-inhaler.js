@@ -16,18 +16,18 @@ const productData = products.find(
 );
 
 const variantIcons = {
+  Mint: <FaLeaf className='text-green-500 text-xl' />,
   Grape: <GiGrapes className='text-purple-600 text-xl' />,
   Watermelon: <GiWatermelon className='text-red-500 text-xl' />,
-  Mint: <FaLeaf className='text-green-500 text-xl' />,
   Peace: <GiPeach className='text-orange-500 text-xl' />,
   Lemon: <FaLemon className='text-yellow-500 text-xl' />,
   RedBull: <SiRedbull className='text-red-800 text-xl' />,
 };
 
 const variantBgColors = {
+  Mint: 'bg-green-100',
   Grape: 'bg-purple-100',
   Watermelon: 'bg-red-100',
-  Mint: 'bg-green-100',
   Peace: 'bg-orange-100',
   Lemon: 'bg-yellow-100',
   RedBull: 'bg-red-100',
