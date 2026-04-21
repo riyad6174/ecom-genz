@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Navbar from '@/components/common/Navbar';
 import CustomSection from '@/components/layout/CustomSection';
@@ -45,6 +45,34 @@ function Cart() {
     setTotalPrice(total);
     setGrandTotal(total + shippingCharge);
   }, [cartItems, shippingCharge]);
+
+  // Fire begin_checkout once when cart items are present
+  const beginCheckoutFired = useRef(false);
+  useEffect(() => {
+    if (!beginCheckoutFired.current && cartItems.length > 0) {
+      beginCheckoutFired.current = true;
+      const value = cartItems.reduce(
+        (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
+        0
+      );
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'begin_checkout',
+        ecommerce: {
+          currency: 'BDT',
+          value,
+          items: cartItems.map((item) => ({
+            item_id: item.id || 'unknown',
+            item_name: item.title || 'unknown',
+            price: item.price || 0,
+            quantity: item.quantity || 1,
+            item_variant: item.selectedColor || item.selectedVariantValue,
+            item_category: item.category || 'Accessories',
+          })),
+        },
+      });
+    }
+  }, [cartItems]);
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -224,6 +252,12 @@ function Cart() {
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
           event: 'purchase',
+          user_data: {
+            name: formData.fullName,
+            phone: formData.phoneNumber,
+            address: formData.address,
+            district: formData.district,
+          },
           ecommerce: {
             transaction_id: order.order.orderId || 'ORD-UNKNOWN',
             value: order.order.grandTotal || 0,
@@ -235,7 +269,7 @@ function Cart() {
               price: item.price || 0,
               quantity: item.quantity || 1,
               item_variant: item.selectedColor || item.selectedVariantValue,
-              item_category: item.category || 'Accessories', // Adjust based on product data
+              item_category: item.category || 'Accessories',
             })),
           },
         });
