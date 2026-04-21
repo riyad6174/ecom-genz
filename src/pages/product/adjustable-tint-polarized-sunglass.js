@@ -22,7 +22,7 @@ const StarIcon = ({ filled }) => (
   </svg>
 );
 
-const DESC_IMGS = ['desc1.jpeg', 'desc2.jpeg', 'desc3.jpeg', 'desc4.jpeg'];
+const DESC_IMGS = ['size.webp', 'color.jpeg', 'desc3.jpeg', 'desc4.jpeg'];
 
 /* ─── Main Page ─── */
 const ProductDetails = ({ initialProduct }) => {
