@@ -1,5 +1,25 @@
 export const products = [
   {
+    id: 13,
+    title: '110-in-1 Magnetic Professional Screwdriver Tool Kit | DIY & Computer Repair',
+    slug: 'professional-screwdriver-tool-kit',
+    model: 'KS-840110-1',
+    price: 1450.0,
+    originalPrice: 1850.0,
+    sectionType: 'hot',
+    inStock: true,
+    thumbnail: '/assets/product/screw/main.jpg',
+    description:
+      'এই ১১০-ইন-১ ম্যাগনেটিক স্ক্রু ড্রাইভার সেট পেশাদার ও DIY কাজের জন্য আদর্শ। উচ্চমানের CR-V ম্যাটেরিয়াল দিয়ে তৈরি এই টুলকিট কম্পিউটার রিপেয়ার থেকে শুরু করে ঘরোয়া মেরামত পর্যন্ত সব কাজে কার্যকর।',
+    images: [
+      '/assets/product/screw/main.jpg',
+      '/assets/product/screw/main2.jpg',
+      '/assets/product/screw/main3.jpg',
+      '/assets/product/screw/main4.jpg',
+    ],
+    variants: [{ color: 'Red' }],
+  },
+  {
     id: 12,
     title: 'ProShave Triple-Blade Full-Body Electric Shaver | IPX7 Waterproof | USB Type-C Rechargeable',
     slug: 'portable-mini-home-shaver',
