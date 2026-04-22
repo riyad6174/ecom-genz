@@ -1,5 +1,27 @@
 export const products = [
   {
+    id: 12,
+    title: 'ProShave Triple-Blade Full-Body Electric Shaver | IPX7 Waterproof | USB Type-C Rechargeable',
+    slug: 'portable-mini-home-shaver',
+    model: 'TXD019',
+    price: 1450.0,
+    originalPrice: 1680.0,
+    sectionType: 'hot',
+    inStock: true,
+    thumbnail: '/assets/product/shaver/main-1.jpg',
+    description:
+      'এই পোর্টেবল মিনি হোম শেভার ট্রিপল ব্লেড ফয়েল টেকনোলজি ব্যবহার করে মুখ, শরীর ও আন্ডারআর্মের চুল মসৃণভাবে কাটতে সক্ষম। IPX7 ওয়াটারপ্রুফ, USB Type-C রিচার্জেবল এবং ১৮০ মিনিটের ব্যাটারি লাইফ সহ এটি ঘরে ও ভ্রমণে ব্যবহারের জন্য পারফেক্ট।',
+    images: [
+      '/assets/product/shaver/main-1.jpg',
+      '/assets/product/shaver/main-2.jpg',
+      '/assets/product/shaver/main-3.jpg',
+      '/assets/product/shaver/main-4.jpg',
+      '/assets/product/shaver/main-5.jpg',
+      '/assets/product/shaver/main-6.jpg',
+    ],
+    variants: [{ color: 'Black' }],
+  },
+  {
     id: 11,
     title: '3D Human Body Torso Model for Kids | Learn Anatomy  | Genz Shop',
     slug: '3d-human-body-torso-model-for-kids',
