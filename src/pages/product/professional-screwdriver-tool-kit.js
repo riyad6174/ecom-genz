@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Navbar from '@/components/common/Navbar';
 import Related from '@/components/checkout/Related';
@@ -115,7 +115,7 @@ const ProductDetails = ({ initialProduct }) => {
         <title>{product.title} | Buy Online in Bangladesh | Sheii Shop</title>
         <meta
           name='description'
-          content={`বাংলাদেশে সেরা দামে ${product.title} কিনুন। ১১০টি বিট সহ CR-V ম্যাগনেটিক স্ক্রু ড্রাইভার সেট — কম্পিউটার রিপেয়ার ও DIY কাজের জন্য পারফেক্ট টুলকিট।`}
+          content={`বাংলাদেশে সেরা দামে ${product.title} কিনুন। 110টি বিট সহ CR-V ম্যাগনেটিক স্ক্রু ড্রাইভার সেট — কম্পিউটার রিপেয়ার ও DIY কাজের জন্য পারফেক্ট টুলকিট।`}
         />
         <meta
           name='keywords'
@@ -305,7 +305,7 @@ const ProductDetails = ({ initialProduct }) => {
                     <StarIcon key={s} filled />
                   ))}
                   <span className='text-sm text-gray-500 bangla'>
-                    (৪.৮ · ৯৬টি রিভিউ)
+                    (4.8 · 96টি রিভিউ)
                   </span>
                 </div>
 
@@ -458,9 +458,9 @@ const ProductDetails = ({ initialProduct }) => {
             <p className='text-gray-700 bangla text-lg leading-relaxed mb-5'>
               আপনার মেরামত ও DIY কাজকে আরও সহজ করে তুলুন —{' '}
               <strong className='text-indigo-600'>
-                ১১০-ইন-১ ম্যাগনেটিক প্রফেশনাল স্ক্রু ড্রাইভার সেট
+                110-ইন-1 ম্যাগনেটিক প্রফেশনাল স্ক্রু ড্রাইভার সেট
               </strong>{' '}
-              আপনার সেরা সঙ্গী। একটি কিটেই পাচ্ছেন ১১০টি বিভিন্ন ধরনের বিট, যা
+              আপনার সেরা সঙ্গী। একটি কিটেই পাচ্ছেন 110টি বিভিন্ন ধরনের বিট, যা
               কম্পিউটার, মোবাইল, ঘড়ি ও যেকোনো ইলেকট্রনিক ডিভাইস মেরামতে কাজে
               আসবে।
             </p>
@@ -481,8 +481,8 @@ const ProductDetails = ({ initialProduct }) => {
             {[
               {
                 icon: '🔧',
-                title: '১১০-ইন-১ কম্প্রিহেনসিভ সেট',
-                desc: '১১০টি বিভিন্ন ধরনের বিট একটি সেটে — যেকোনো স্ক্রু টাইপের জন্য প্রস্তুত।',
+                title: '110-ইন-1 কম্প্রিহেনসিভ সেট',
+                desc: '110টি বিভিন্ন ধরনের বিট একটি সেটে — যেকোনো স্ক্রু টাইপের জন্য প্রস্তুত।',
                 bg: 'bg-indigo-50',
                 ibg: 'bg-indigo-100',
               },
@@ -559,12 +559,12 @@ const ProductDetails = ({ initialProduct }) => {
               {[
                 { l: 'মডেল নম্বর', v: 'KS-840110-1' },
                 { l: 'ব্র্যান্ড', v: 'Kingsdun' },
-                { l: 'বিটের সংখ্যা', v: '১১০টি' },
+                { l: 'বিটের সংখ্যা', v: '110টি' },
                 { l: 'টুলের ধরন', v: 'Hand Tools (Screwdriver Set)' },
                 { l: 'উপাদান', v: 'CR-V (Chromium-Vanadium Steel)' },
                 { l: 'ব্যবহার', v: 'Computer Repair, DIY, Household' },
                 { l: 'প্যাকেজিং', v: 'Plastic Box' },
-                { l: 'ওয়ারেন্টি', v: '১ বছর' },
+                { l: 'ওয়ারেন্টি', v: '1 বছর' },
                 { l: 'OEM সাপোর্ট', v: 'আছে' },
                 { l: 'উৎপত্তিস্থল', v: 'Guangdong, China' },
                 { l: 'রঙ', v: 'লাল (Red)' },

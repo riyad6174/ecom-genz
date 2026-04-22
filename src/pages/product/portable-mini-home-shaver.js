@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Navbar from '@/components/common/Navbar';
 import Related from '@/components/checkout/Related';
@@ -115,7 +115,7 @@ const ProductDetails = ({ initialProduct }) => {
         <title>{product.title} | Buy Online in Bangladesh | Sheii Shop</title>
         <meta
           name='description'
-          content={`বাংলাদেশে সেরা দামে ${product.title} কিনুন। ট্রিপল ব্লেড, IPX7 ওয়াটারপ্রুফ, USB Type-C চার্জিং এবং ১৮০ মিনিটের ব্যাটারি ব্যাকআপসহ সেরা পোর্টেবল ইলেকট্রিক শেভার।`}
+          content={`বাংলাদেশে সেরা দামে ${product.title} কিনুন। ট্রিপল ব্লেড, IPX7 ওয়াটারপ্রুফ, USB Type-C চার্জিং এবং 180 মিনিটের ব্যাটারি ব্যাকআপসহ সেরা পোর্টেবল ইলেকট্রিক শেভার।`}
         />
         <meta
           name='keywords'
@@ -305,7 +305,7 @@ const ProductDetails = ({ initialProduct }) => {
                     <StarIcon key={s} filled />
                   ))}
                   <span className='text-sm text-gray-500 bangla'>
-                    (৪.৮ · ৯৬টি রিভিউ)
+                    (4.8 · 96টি রিভিউ)
                   </span>
                 </div>
 
@@ -466,7 +466,7 @@ const ProductDetails = ({ initialProduct }) => {
             <p className='text-gray-700 bangla text-lg leading-relaxed mb-5'>
               এর <strong>IPX7 ওয়াটারপ্রুফ</strong> ডিজাইন মানে ভেজা বা শুকনো
               দুই অবস্থায়ই ব্যবহার করা যাবে — গোসলের সময়ও। USB Type-C দিয়ে
-              মাত্র ১-৩ ঘণ্টায় ফুল চার্জ হয় এবং একটানা ১৮০ মিনিট পর্যন্ত চলে।
+              মাত্র 1-3 ঘণ্টায় ফুল চার্জ হয় এবং একটানা 180 মিনিট পর্যন্ত চলে।
             </p>
             <p className='text-gray-700 bangla text-lg leading-relaxed'>
               হালকা প্লাস্টিক বডি ও কমপ্যাক্ট ডিজাইনের কারণে ঘরে ও ভ্রমণে
@@ -494,8 +494,8 @@ const ProductDetails = ({ initialProduct }) => {
               },
               {
                 icon: '🔋',
-                title: '১৮০ মিনিটের ব্যাটারি লাইফ',
-                desc: '১২০০ mAh লিথিয়াম-আয়ন ব্যাটারি একবার চার্জে দীর্ঘ সময় ব্যবহারের সুবিধা দেয়।',
+                title: '180 মিনিটের ব্যাটারি লাইফ',
+                desc: '1200 mAh লিথিয়াম-আয়ন ব্যাটারি একবার চার্জে দীর্ঘ সময় ব্যবহারের সুবিধা দেয়।',
                 bg: 'bg-emerald-50',
                 ibg: 'bg-emerald-100',
               },
@@ -560,10 +560,10 @@ const ProductDetails = ({ initialProduct }) => {
                 { l: 'শেভার টাইপ', v: 'Foil Shaver' },
                 { l: 'ব্লেড সংখ্যা', v: 'Triple Blade' },
                 { l: 'ওয়াটারপ্রুফ রেটিং', v: 'IPX7' },
-                { l: 'ব্যাটারি ক্যাপাসিটি', v: '১২০০ mAh (Li-ion)' },
-                { l: 'কার্যকর সময়', v: '১৮০ মিনিট' },
-                { l: 'চার্জিং সময়', v: '১–৩ ঘণ্টা' },
-                { l: 'পাওয়ার', v: '১৫ ওয়াট' },
+                { l: 'ব্যাটারি ক্যাপাসিটি', v: '1200 mAh (Li-ion)' },
+                { l: 'কার্যকর সময়', v: '180 মিনিট' },
+                { l: 'চার্জিং সময়', v: '1–3 ঘণ্টা' },
+                { l: 'পাওয়ার', v: '15 ওয়াট' },
                 { l: 'পাওয়ার সোর্স', v: 'USB / Type-C / Rechargeable Battery' },
                 { l: 'ব্যবহারের স্থান', v: 'মুখ, শরীর, আন্ডারআর্ম' },
                 { l: 'বডি ম্যাটেরিয়াল', v: 'প্লাস্টিক' },

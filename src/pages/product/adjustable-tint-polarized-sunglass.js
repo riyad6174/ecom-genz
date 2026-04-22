@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Navbar from '@/components/common/Navbar';
 import Related from '@/components/checkout/Related';
@@ -115,7 +115,7 @@ const ProductDetails = ({ initialProduct }) => {
         <title>{product.title} | Buy Online in Bangladesh | Sheii Shop</title>
         <meta
           name='description'
-          content={`বাংলাদেশে সেরা দামে ${product.title} কিনুন। বৈশিষ্ট্যসমূহের মধ্যে রয়েছে ১-৯ স্তরের অ্যাডজাস্টেবল লেন্স, ইউভি সুরক্ষা, পোলারাইজড টেকনোলজি এবং আরও অনেক কিছু।`}
+          content={`বাংলাদেশে সেরা দামে ${product.title} কিনুন। বৈশিষ্ট্যসমূহের মধ্যে রয়েছে 1-9 স্তরের অ্যাডজাস্টেবল লেন্স, ইউভি সুরক্ষা, পোলারাইজড টেকনোলজি এবং আরও অনেক কিছু।`}
         />
         <meta
           name='keywords'
@@ -305,7 +305,7 @@ const ProductDetails = ({ initialProduct }) => {
                     <StarIcon key={s} filled />
                   ))}
                   <span className='text-sm text-gray-500 bangla'>
-                    (৪.৮ · ৯৬টি রিভিউ)
+                    (4.8 · 96টি রিভিউ)
                   </span>
                 </div>
 
@@ -569,8 +569,8 @@ const ProductDetails = ({ initialProduct }) => {
               {[
                 { l: 'মডেল', v: 'অ্যাডজাস্টেবল টিন্ট পোলারাইজড সানগ্লাস' },
                 { l: 'লেন্স টেকনোলজি', v: 'পোলারাইজড + এনডি ফিল্টার' },
-                { l: 'অ্যাডজাস্টমেন্ট লেভেল', v: '১ – ৯ ধাপ' },
-                { l: 'UV সুরক্ষা', v: 'UV-A ও UV-B ১০০%' },
+                { l: 'অ্যাডজাস্টমেন্ট লেভেল', v: '1 – 9 ধাপ' },
+                { l: 'UV সুরক্ষা', v: 'UV-A ও UV-B 100%' },
                 { l: 'ফ্রেম ডিজাইন', v: 'ক্লাসিক রাউন্ড' },
                 { l: 'উপাদান', v: 'লাইটওয়েট প্রিমিয়াম ফ্রেম' },
                 { l: 'রঙের বিকল্প', v: 'কালো, সিলভার, গোল্ডেন' },

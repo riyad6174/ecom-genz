@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { GoShareAndroid } from 'react-icons/go';
 import Navbar from '@/components/common/Navbar';
@@ -122,7 +122,7 @@ const ProductDetails = ({ initialProduct }) => {
         <title>{product.title} | Buy Online in Bangladesh | Sheii Shop</title>
         <meta
           name='description'
-          content={`বাংলাদেশে সেরা দামে ${product.title} কিনুন। ৬০০০ মিলি অ্যাম্পিয়ার রিচার্জেবল ব্যাটারি, টাইপ সি ফাস্ট চার্জ, অ্যান্টি হিট প্রটেকশন এবং ভ্রমণকারীদের জন্য আদর্শ। শীতকালে শিশুর উষ্ণ খাবারের জন্য নিখুঁত।`}
+          content={`বাংলাদেশে সেরা দামে ${product.title} কিনুন। 6000 মিলি অ্যাম্পিয়ার রিচার্জেবল ব্যাটারি, টাইপ সি ফাস্ট চার্জ, অ্যান্টি হিট প্রটেকশন এবং ভ্রমণকারীদের জন্য আদর্শ। শীতকালে শিশুর উষ্ণ খাবারের জন্য নিখুঁত।`}
         />
         <meta
           name='keywords'
@@ -375,7 +375,7 @@ const ProductDetails = ({ initialProduct }) => {
               <p className='text-gray-600 font-mont text-sm'>
                 আপনার শিশুর খাবারকে যেকোনো সময় উষ্ণ রাখুন এই পোর্টেবল
                 রিচার্জেবল বেবি ফিডিং বোতল ওয়ার্মার দিয়ে। এটি শিশুদের জন্য
-                বিশেষভাবে তৈরি, হালকা ওজন এবং উন্নত বিল্ড কোয়ালিটির সাথে। ৬০০০
+                বিশেষভাবে তৈরি, হালকা ওজন এবং উন্নত বিল্ড কোয়ালিটির সাথে। 6000
                 মিলি অ্যাম্পিয়ার ব্যাটারি দিয়ে এটি দীর্ঘস্থায়ী চার্জ প্রদান
                 করে এবং টাইপ সি সাপোর্টেড ফাস্ট চার্জিংয়ের মাধ্যমে দ্রুত
                 রিচার্জ হয়। ইনবিল্ট অ্যান্টি হিট প্রটেকশন নিশ্চিত করে নিরাপদ
@@ -398,7 +398,7 @@ const ProductDetails = ({ initialProduct }) => {
                 Key Features:
               </p>
               <ul className='list-disc list-inside text-gray-600 font-mont text-sm'>
-                <li>🔋 ৬০০০ মিলি অ্যাম্পিয়ার রিচার্জেবল ব্যাটারি</li>
+                <li>🔋 6000 মিলি অ্যাম্পিয়ার রিচার্জেবল ব্যাটারি</li>
                 <li>⚡ টাইপ সি সাপোর্টেড ফাস্ট চার্জিং</li>
                 <li>🛡️ ইনবিল্ট অ্যান্টি হিট প্রটেকশন</li>
                 <li>👶 শিশুদের জন্য উপযুক্ত এবং নিরাপদ</li>

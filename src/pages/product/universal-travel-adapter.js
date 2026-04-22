@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { GoShareAndroid } from 'react-icons/go';
 import {
@@ -204,7 +204,7 @@ const ProductDetails = ({ initialProduct }) => {
     {
       question: 'এটি কি দ্রুত চার্জিং সাপোর্ট করে?',
       answer:
-        'হ্যাঁ, PD (Power Delivery) এবং QC (Quick Charge) প্রোটোকল সাপোর্ট করে। ২০W থেকে ৬৫W পর্যন্ত আউটপুট, যা আপনার স্মার্টফোন, ট্যাবলেট বা ল্যাপটপ দ্রুত চার্জ করবে।',
+        'হ্যাঁ, PD (Power Delivery) এবং QC (Quick Charge) প্রোটোকল সাপোর্ট করে। 20W থেকে 65W পর্যন্ত আউটপুট, যা আপনার স্মার্টফোন, ট্যাবলেট বা ল্যাপটপ দ্রুত চার্জ করবে।',
     },
     {
       question: 'অ্যাডাপ্টারটি কি নিরাপদ?',
@@ -214,7 +214,7 @@ const ProductDetails = ({ initialProduct }) => {
     {
       question: 'এটি কতটা হালকা এবং বহনযোগ্য?',
       answer:
-        'মাত্র ১০০ গ্রামের কম ওজনের এবং কম্প্যাক্ট সাইজ (৫x৫x৩ সেমি)। ট্রাভেল ব্যাগে সহজেই রাখা যায় এবং ফোল্ডেবল পিন ডিজাইন।',
+        'মাত্র 100 গ্রামের কম ওজনের এবং কম্প্যাক্ট সাইজ (5x5x3 সেমি)। ট্রাভেল ব্যাগে সহজেই রাখা যায় এবং ফোল্ডেবল পিন ডিজাইন।',
     },
   ];
 
@@ -222,12 +222,12 @@ const ProductDetails = ({ initialProduct }) => {
     {
       name: 'আব্দুল্লাহ আল মামুন',
       rating: 5,
-      text: '৩৫W ভার্সন নিয়েছি, ইউরোপ ট্রিপে পারফেক্ট কাজ করেছে! সব ডিভাইস চার্জ হয়েছে দ্রুত, কোনো সমস্যা নেই। খুবই ডুরেবল।',
+      text: '35W ভার্সন নিয়েছি, ইউরোপ ট্রিপে পারফেক্ট কাজ করেছে! সব ডিভাইস চার্জ হয়েছে দ্রুত, কোনো সমস্যা নেই। খুবই ডুরেবল।',
     },
     {
       name: 'নীলিমা আহমেদ',
       rating: 4,
-      text: '৬৫W অ্যাডাপ্টার দিয়ে ল্যাপটপও চার্জ করছি। বিভিন্ন দেশের সকেটে ফিট হয়েছে, কিন্তু একটু ভারী লাগে ব্যাগে। তবু সুপার প্রোডাক্ট!',
+      text: '65W অ্যাডাপ্টার দিয়ে ল্যাপটপও চার্জ করছি। বিভিন্ন দেশের সকেটে ফিট হয়েছে, কিন্তু একটু ভারী লাগে ব্যাগে। তবু সুপার প্রোডাক্ট!',
     },
   ];
 
@@ -473,7 +473,7 @@ const ProductDetails = ({ initialProduct }) => {
                 </button>
               </div>
               <p className='text-sm text-gray-600 font-semibold'>
-                *প্রতিটি প্রোডাক্টের সাথে পেয়ে যাচ্ছেন ১ বছরের ওয়ারেন্টি ।
+                *প্রতিটি প্রোডাক্টের সাথে পেয়ে যাচ্ছেন 1 বছরের ওয়ারেন্টি ।
               </p>
             </div>
           </div>
@@ -499,13 +499,13 @@ const ProductDetails = ({ initialProduct }) => {
                 <span className='font-semibold flex items-center gap-2'>
                   <FaGlobe /> Universal Compatibility:
                 </span>{' '}
-                Type A/B/C/G/I প্লাগ সাপোর্ট, ১৫০+ দেশে ব্যবহারযোগ্য।
+                Type A/B/C/G/I প্লাগ সাপোর্ট, 150+ দেশে ব্যবহারযোগ্য।
               </li>
               <li className='flex flex-col md:flex-row items-start md:items-center gap-3'>
                 <span className='font-semibold flex items-center gap-2'>
                   <BsThunderbolt /> Fast Charging:
                 </span>{' '}
-                PD 3.0 এবং QC 3.0 সাপোর্ট, ২০W-৬৫W আউটপুট।
+                PD 3.0 এবং QC 3.0 সাপোর্ট, 20W-65W আউটপুট।
               </li>
               <li className='flex flex-col md:flex-row items-start md:items-center gap-3'>
                 <span className='font-semibold flex items-center gap-2'>
@@ -519,7 +519,7 @@ const ProductDetails = ({ initialProduct }) => {
               </li>
               <li className='flex flex-col md:flex-row items-start md:items-center gap-3'>
                 <span className='font-semibold'>Portable Design:</span> ফোল্ডেবল
-                পিন, হালকা ওজন (৮০g), ট্রাভেল কেস সহ।
+                পিন, হালকা ওজন (80g), ট্রাভেল কেস সহ।
               </li>
               <li className='flex flex-col md:flex-row items-start md:items-center gap-3'>
                 <span className='font-semibold'>LED Indicator:</span> চার্জিং

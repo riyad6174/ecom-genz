@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import Navbar from '@/components/common/Navbar';
 import { products } from '@/utils/products';
@@ -80,7 +80,7 @@ const ReviewSlider = ({ handleBuyNow, product }) => {
               <StarIcon key={s} filled />
             ))}
             <span className='text-gray-500 bangla text-sm ml-1'>
-              ৪.৯ · ১২৮টি রিভিউ
+              4.9 · 128টি রিভিউ
             </span>
           </div>
         </div>
@@ -501,7 +501,7 @@ const ProductDetails = ({ initialProduct }) => {
                     <StarIcon key={s} filled />
                   ))}
                   <span className='text-sm text-gray-500 bangla'>
-                    (৪.৯ · ১২৮টি রিভিউ)
+                    (4.9 · 128টি রিভিউ)
                   </span>
                 </div>
 
@@ -590,7 +590,7 @@ const ProductDetails = ({ initialProduct }) => {
                   {[
                     { icon: '🚀', text: 'দ্রুত ডেলিভারি' },
                     { icon: '🔒', text: 'ক্যাশ অন ডেলিভারি' },
-                    { icon: '🔄', text: '৬ মাসের সার্ভিস ওয়ারেন্টি ' },
+                    { icon: '🔄', text: '6 মাসের সার্ভিস ওয়ারেন্টি ' },
                     { icon: '🎁', text: 'বিশেষ অফার' },
                   ].map((p) => (
                     <div key={p.text} className='flex items-center gap-2'>
@@ -662,7 +662,7 @@ const ProductDetails = ({ initialProduct }) => {
               শান্ত।
             </p>
             <p className='text-gray-700 bangla text-lg leading-relaxed mb-5'>
-              মাত্র <strong>১৮৩.৬ গ্রাম</strong> ওজনের এই ফ্যান — যা আপনার
+              মাত্র <strong>183.6 গ্রাম</strong> ওজনের এই ফ্যান — যা আপনার
               স্মার্টফোনের চেয়েও হালকা — অনায়াসে ব্যাগে বা পকেটে রাখা যায়।
               অফিস, ভ্রমণ, বাজার বা বাড়িতে যেখানেই থাকুন, এটি আপনার সাথেই
               থাকবে।
@@ -687,14 +687,14 @@ const ProductDetails = ({ initialProduct }) => {
               {
                 icon: '🎒',
                 title: 'অতি-হালকা ও বহনযোগ্য',
-                desc: 'মাত্র ১৮৩.৬ গ্রাম ওজন — যেকোনো জায়গায় নিয়ে যান অনায়াসে।',
+                desc: 'মাত্র 183.6 গ্রাম ওজন — যেকোনো জায়গায় নিয়ে যান অনায়াসে।',
                 bg: 'bg-purple-50',
                 ibg: 'bg-purple-100',
               },
               {
                 icon: '🔋',
                 title: 'দীর্ঘস্থায়ী ব্যাটারি',
-                desc: 'একবার চার্জে ৭-৮ ঘণ্টা অবিরাম ঠান্ডা বাতাস উপভোগ করুন।',
+                desc: 'একবার চার্জে 7-8 ঘণ্টা অবিরাম ঠান্ডা বাতাস উপভোগ করুন।',
                 bg: 'bg-emerald-50',
                 ibg: 'bg-emerald-100',
               },
@@ -708,7 +708,7 @@ const ProductDetails = ({ initialProduct }) => {
               {
                 icon: '⚙️',
                 title: 'কাস্টমাইজড স্পিড',
-                desc: '০ থেকে ২০০ পর্যন্ত অ্যাডজাস্টেবল স্পিড সেটিং — আপনার মতো করে কনফিগার করুন।',
+                desc: '0 থেকে 200 পর্যন্ত অ্যাডজাস্টেবল স্পিড সেটিং — আপনার মতো করে কনফিগার করুন।',
                 bg: 'bg-rose-50',
                 ibg: 'bg-rose-100',
               },
@@ -757,12 +757,12 @@ const ProductDetails = ({ initialProduct }) => {
               {[
                 { l: 'মডেল', v: 'JF132 মিনি পোর্টেবল কুলিং ফ্যান' },
                 { l: 'উপাদান', v: 'প্রিমিয়াম ABS + অ্যালুমিনিয়াম অ্যালয়' },
-                { l: 'ওজন', v: '১৮৩.৬ গ্রাম' },
-                { l: 'ব্যাটারি লাইফ', v: '৭–৮ ঘণ্টা' },
+                { l: 'ওজন', v: '183.6 গ্রাম' },
+                { l: 'ব্যাটারি লাইফ', v: '7–8 ঘণ্টা' },
                 { l: 'চার্জিং পোর্ট', v: 'USB-C' },
-                { l: 'স্পিড রেঞ্জ', v: '০ – ২০০ লেভেল' },
+                { l: 'স্পিড রেঞ্জ', v: '0 – 200 লেভেল' },
                 { l: 'রঙের বিকল্প', v: 'কালো, সাদা, ধূসর, গোলাপি, নীল, বেইজ' },
-                // { l: 'গ্যারান্টি', v: '৩০ দিনের রিটার্ন পলিসি' },
+                // { l: 'গ্যারান্টি', v: '30 দিনের রিটার্ন পলিসি' },
               ].map((row, i) => (
                 <div
                   key={row.l}
