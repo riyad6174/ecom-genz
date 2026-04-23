@@ -553,7 +553,7 @@ const ProductDetails = ({ initialProduct }) => {
                   </div>
                   {/* desktop thumbs */}
                   <div className='hidden md:flex flex-col gap-3'>
-                    {product.images.slice(0, 3).map((img, i) => (
+                    {product.images.slice(0, 4).map((img, i) => (
                       <div
                         key={i}
                         onClick={() => setActiveImage(img)}
