@@ -285,15 +285,24 @@ const ProductDetails = ({ initialProduct }) => {
           box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
         }
         @keyframes offer-pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.88; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.88;
+          }
         }
         .offer-banner {
           animation: offer-pulse 2.2s ease-in-out infinite;
         }
         @keyframes digit-pop {
-          0% { transform: scale(1.18); }
-          100% { transform: scale(1); }
+          0% {
+            transform: scale(1.18);
+          }
+          100% {
+            transform: scale(1);
+          }
         }
         .countdown-digit {
           animation: digit-pop 0.15s ease-out;
@@ -314,7 +323,8 @@ const ProductDetails = ({ initialProduct }) => {
       <div
         className='offer-banner sticky top-0 z-40 py-2.5 px-4 text-center'
         style={{
-          background: 'linear-gradient(90deg, #7c3aed 0%, #4f46e5 50%, #7c3aed 100%)',
+          background:
+            'linear-gradient(90deg, #7c3aed 0%, #4f46e5 50%, #7c3aed 100%)',
           borderBottom: '2px solid #6d28d9',
         }}
       >
@@ -425,7 +435,9 @@ const ProductDetails = ({ initialProduct }) => {
                     ৳{product.originalPrice.toFixed(0)}
                   </span>
                   <span className='bg-rose-100 text-rose-600 text-sm font-bold px-2 py-0.5 rounded-lg mb-1'>
-                    {discount}% ছাড়
+                    {product.originalPrice.toFixed(0) -
+                      product.price.toFixed(0)}{' '}
+                    টাকা ছাড়
                   </span>
                 </div>
 
@@ -732,7 +744,8 @@ const ProductDetails = ({ initialProduct }) => {
       <div
         className='fixed-offer-bar py-3 px-4'
         style={{
-          background: 'linear-gradient(90deg, #ea580c 0%, #c2410c 50%, #ea580c 100%)',
+          background:
+            'linear-gradient(90deg, #ea580c 0%, #c2410c 50%, #ea580c 100%)',
           borderTop: '2px solid #9a3412',
         }}
       >
