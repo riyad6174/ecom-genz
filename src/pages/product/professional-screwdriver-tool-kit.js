@@ -322,7 +322,9 @@ const ProductDetails = ({ initialProduct }) => {
                     ৳{product.originalPrice.toFixed(0)}
                   </span>
                   <span className='bg-rose-100 text-rose-600 text-sm font-bold px-2 py-0.5 rounded-lg mb-1'>
-                    {discount}% ছাড়
+                    {product.originalPrice.toFixed(0) -
+                      product.price.toFixed(0)}{' '}
+                    TK OFF
                   </span>
                 </div>
 
@@ -465,14 +467,14 @@ const ProductDetails = ({ initialProduct }) => {
               আসবে।
             </p>
             <p className='text-gray-700 bangla text-lg leading-relaxed mb-5'>
-              উচ্চমানের <strong>CR-V স্টিল</strong> দিয়ে তৈরি এই টুলগুলো টেকসই ও
-              দীর্ঘস্থায়ী। ম্যাগনেটিক ডিজাইনের কারণে ছোট স্ক্রু সহজেই ধরা যায়,
-              কাজ হয় দ্রুত ও নির্ভুল।
+              উচ্চমানের <strong>CR-V স্টিল</strong> দিয়ে তৈরি এই টুলগুলো টেকসই
+              ও দীর্ঘস্থায়ী। ম্যাগনেটিক ডিজাইনের কারণে ছোট স্ক্রু সহজেই ধরা
+              যায়, কাজ হয় দ্রুত ও নির্ভুল।
             </p>
             <p className='text-gray-700 bangla text-lg leading-relaxed'>
               কমপ্যাক্ট বক্সে সাজানো এই সেটটি ঘরে, অফিসে বা ওয়ার্কশপে সহজে
-              সংরক্ষণ করা যায়। পেশাদার থেকে শুরু করে সাধারণ ব্যবহারকারী —
-              সবার জন্যই এটি আদর্শ।
+              সংরক্ষণ করা যায়। পেশাদার থেকে শুরু করে সাধারণ ব্যবহারকারী — সবার
+              জন্যই এটি আদর্শ।
             </p>
           </div>
 
