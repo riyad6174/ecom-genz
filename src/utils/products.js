@@ -1,10 +1,11 @@
 export const products = [
   {
     id: 13,
-    title: '110-in-1 Magnetic Professional Screwdriver Tool Kit | DIY & Computer Repair',
+    title:
+      '110-in-1 Magnetic Professional Screwdriver Tool Kit | DIY & Computer Repair',
     slug: 'professional-screwdriver-tool-kit',
     model: 'KS-840110-1',
-    price: 1450.0,
+    price: 999.0,
     originalPrice: 1850.0,
     sectionType: 'hot',
     inStock: true,
@@ -21,7 +22,8 @@ export const products = [
   },
   {
     id: 12,
-    title: 'ProShave Triple-Blade Full-Body Electric Shaver | IPX7 Waterproof | USB Type-C Rechargeable',
+    title:
+      'ProShave Triple-Blade Full-Body Electric Shaver | IPX7 Waterproof | USB Type-C Rechargeable',
     slug: 'portable-mini-home-shaver',
     model: 'TXD019',
     price: 1450.0,
