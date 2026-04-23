@@ -39,6 +39,71 @@ const DESC_IMGS = [
   'desc-6.jpeg',
 ];
 
+function CountdownToMidnight() {
+  const [timeLeft, setTimeLeft] = useState({ h: 0, m: 0, s: 0 });
+
+  useEffect(() => {
+    const tick = () => {
+      const now = new Date();
+      const midnight = new Date(now);
+      midnight.setHours(24, 0, 0, 0);
+      const diff = Math.max(0, Math.floor((midnight - now) / 1000));
+      setTimeLeft({
+        h: Math.floor(diff / 3600),
+        m: Math.floor((diff % 3600) / 60),
+        s: diff % 60,
+      });
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const pad = (n) => String(n).padStart(2, '0');
+
+  return (
+    <div
+      className='rounded-xl px-4 py-3 my-3'
+      style={{
+        background: 'linear-gradient(135deg, #fff7ed, #ffedd5)',
+        border: '1.5px solid #fed7aa',
+      }}
+    >
+      <p className='bangla text-sm font-semibold text-center text-orange-700 mb-2'>
+        ⏰ অফার টি চলবে আর
+      </p>
+      <div className='flex items-center justify-center gap-2'>
+        {[
+          { val: pad(timeLeft.h), label: 'ঘণ্টা' },
+          { val: pad(timeLeft.m), label: 'মিনিট' },
+          { val: pad(timeLeft.s), label: 'সেকেন্ড' },
+        ].map((unit, i) => (
+          <React.Fragment key={unit.label}>
+            {i > 0 && (
+              <span className='text-orange-500 font-black text-2xl leading-none mb-4'>
+                :
+              </span>
+            )}
+            <div className='flex flex-col items-center'>
+              <span
+                className='countdown-digit font-mono font-extrabold text-lg px-3 py-1.5 rounded-lg min-w-[44px] text-center shadow-md text-white'
+                style={{
+                  background: 'linear-gradient(135deg, #ea580c, #c2410c)',
+                }}
+              >
+                {unit.val}
+              </span>
+              <span className='text-[10px] text-orange-600 bangla mt-1 font-medium'>
+                {unit.label}
+              </span>
+            </div>
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Review Slider ─── */
 const ReviewSlider = ({ handleBuyNow, product }) => {
   const [cur, setCur] = useState(0);
@@ -421,9 +486,54 @@ const ProductDetails = ({ initialProduct }) => {
           transform: translateY(-4px);
           box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
         }
+        @keyframes offer-pulse {
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.88;
+          }
+        }
+        .offer-banner {
+          animation: offer-pulse 2.2s ease-in-out infinite;
+        }
+        @keyframes digit-pop {
+          0% {
+            transform: scale(1.18);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+        .countdown-digit {
+          animation: digit-pop 0.15s ease-out;
+        }
+        .fixed-offer-bar {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          z-index: 50;
+          animation: offer-pulse 2.2s ease-in-out infinite;
+        }
       `}</style>
 
       <Navbar />
+
+      {/* Offer Banner — sticky below navbar */}
+      <div
+        className='offer-banner sticky top-0 z-40 py-2.5 px-4 text-center'
+        style={{
+          background:
+            'linear-gradient(90deg, #7c3aed 0%, #4f46e5 50%, #7c3aed 100%)',
+          borderBottom: '2px solid #6d28d9',
+        }}
+      >
+        <p className='text-white font-bold bangla text-sm md:text-base tracking-wide drop-shadow'>
+          🎉 {discount}% ডিস্কাউন্ট পাচ্ছেন শুধু আজকের জন্য 🎉
+        </p>
+      </div>
 
       {/* ── Hero ── */}
       <div className='bg-gradient-to-b from-slate-50 to-white'>
@@ -505,6 +615,9 @@ const ProductDetails = ({ initialProduct }) => {
                   </span>
                 </div>
 
+                {/* countdown timer */}
+                <CountdownToMidnight />
+
                 {/* price */}
                 <div className='flex items-end gap-3 mb-6'>
                   <span className='text-4xl font-extrabold text-indigo-600'>
@@ -514,7 +627,9 @@ const ProductDetails = ({ initialProduct }) => {
                     ৳{product.originalPrice.toFixed(0)}
                   </span>
                   <span className='bg-rose-100 text-rose-600 text-sm font-bold px-2 py-0.5 rounded-lg mb-1'>
-                    {discount}% ছাড়
+                    {product.originalPrice.toFixed(0) -
+                      product.price.toFixed(0)}{' '}
+                    টাকা ছাড়
                   </span>
                 </div>
 
@@ -811,7 +926,33 @@ const ProductDetails = ({ initialProduct }) => {
       {/* ── Reviews Slider ── */}
       <ReviewSlider handleBuyNow={handleBuyNow} product={product} />
 
+      {/* Extra bottom padding so fixed bar doesn't overlap footer */}
+      <div className='pb-16' />
+
       <Footer />
+
+      {/* Fixed bottom offer bar */}
+      <div
+        className='fixed-offer-bar py-3 px-4'
+        style={{
+          background:
+            'linear-gradient(90deg, #ea580c 0%, #c2410c 50%, #ea580c 100%)',
+          borderTop: '2px solid #9a3412',
+        }}
+      >
+        <div className='flex items-center justify-between max-w-4xl mx-auto gap-3'>
+          <p className='text-white font-bold bangla text-sm md:text-base'>
+            🔥 সীমিত সময়ের অফার! আজই {discount}% ছাড়ে কিনুন
+          </p>
+          <button
+            onClick={handleBuyNow}
+            disabled={!product.inStock}
+            className='flex-shrink-0 bg-white text-orange-600 font-extrabold bangla px-5 py-2 rounded-lg text-sm hover:bg-orange-50 transition-all duration-200 shadow-md disabled:opacity-70'
+          >
+            {product.inStock ? 'এখনই কিনুন →' : 'স্টক শেষ'}
+          </button>
+        </div>
+      </div>
     </>
   );
 };
