@@ -1,9 +1,10 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import Navbar from '@/components/common/Navbar';
 import Related from '@/components/checkout/Related';
 import { products } from '@/utils/products';
 import { addToCart } from '@/store/cartSlice';
+import { useCartDialog } from '@/context/CartDialogContext';
 import Footer from '@/components/common/Footer';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -27,6 +28,8 @@ const DESC_IMGS = ['main-3.jpg', 'main-4.jpg', 'main-5.jpg', 'main-6.jpg'];
 /* ─── Main Page ─── */
 const ProductDetails = ({ initialProduct }) => {
   const dispatch = useDispatch();
+  const { openDialog } = useCartDialog();
+  const viewItemFired = useRef(false);
   const router = useRouter();
   const [product, setProduct] = useState(initialProduct);
   const [selectedColor, setSelectedColor] = useState('');
@@ -34,6 +37,8 @@ const ProductDetails = ({ initialProduct }) => {
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
+    if (viewItemFired.current) return;
+    viewItemFired.current = true;
     if (initialProduct) {
       setProduct(initialProduct);
       setSelectedColor(initialProduct.variants?.[0]?.color || '');
@@ -100,7 +105,7 @@ const ProductDetails = ({ initialProduct }) => {
       }),
     );
 
-    router.push('/order');
+    openDialog();
   };
 
   if (!product) return <div>Product not found</div>;

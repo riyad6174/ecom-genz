@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { GoShareAndroid } from 'react-icons/go';
 import {
@@ -16,6 +16,7 @@ import Navbar from '@/components/common/Navbar';
 import CustomSection from '@/components/layout/CustomSection';
 import { products } from '@/utils/products';
 import { addToCart } from '@/store/cartSlice';
+import { useCartDialog } from '@/context/CartDialogContext';
 import Footer from '@/components/common/Footer';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -38,6 +39,8 @@ const getVariantValue = (variant) => {
 
 const ProductDetails = ({ initialProduct }) => {
   const dispatch = useDispatch();
+  const { openDialog } = useCartDialog();
+  const viewItemFired = useRef(false);
   const router = useRouter();
   const [product, setProduct] = useState(initialProduct);
   const [selectedColor, setselectedColor] = useState('');
@@ -46,6 +49,8 @@ const ProductDetails = ({ initialProduct }) => {
   const [variantKey, setVariantKey] = useState(null);
 
   useEffect(() => {
+    if (viewItemFired.current) return;
+    viewItemFired.current = true;
     if (initialProduct) {
       setProduct(initialProduct);
       const key = getVariantKey(initialProduct.variants);
@@ -138,7 +143,7 @@ const ProductDetails = ({ initialProduct }) => {
           variantKey,
         })
       );
-      router.push('/order');
+      openDialog();
     }
   };
 

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { GiGrapes, GiWatermelon, GiPeach } from 'react-icons/gi';
 import { FaLeaf, FaLemon, FaQuestionCircle } from 'react-icons/fa';
@@ -6,6 +6,7 @@ import Navbar from '@/components/common/Navbar';
 import CustomSection from '@/components/layout/CustomSection';
 import { products } from '@/utils/products';
 import { addToCart } from '@/store/cartSlice';
+import { useCartDialog } from '@/context/CartDialogContext';
 import Footer from '@/components/common/Footer';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -44,12 +45,16 @@ const getBundlePrice = (qty) => {
 
 const ProductDetails = ({ initialProduct }) => {
   const dispatch = useDispatch();
+  const { openDialog } = useCartDialog();
+  const viewItemFired = useRef(false);
   const router = useRouter();
   const [product, setProduct] = useState(initialProduct);
   const [variantQuantities, setVariantQuantities] = useState({});
   const [activeImage, setActiveImage] = useState('');
 
   useEffect(() => {
+    if (viewItemFired.current) return;
+    viewItemFired.current = true;
     if (initialProduct) {
       setProduct(initialProduct);
       setActiveImage(initialProduct.images[0] || '');
@@ -151,7 +156,7 @@ const ProductDetails = ({ initialProduct }) => {
       }),
     );
 
-    router.push('/order');
+    openDialog();
   };
 
   if (!product) {

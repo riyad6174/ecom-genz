@@ -1,54 +1,54 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { FaBars, FaTimes } from 'react-icons/fa';
+import { FiShoppingCart } from 'react-icons/fi';
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { useCartDialog } from '@/context/CartDialogContext';
 
 function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const cartItems = useSelector((state) => state.cart.items);
+  const { openDialog } = useCartDialog();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
     <>
       {/* Desktop Navbar */}
       <nav className='hidden md:block bg-white shadow-md'>
-        <div className='container mx-auto py-4 flex items-center justify-center'>
+        <div className='container mx-auto py-4 flex items-center justify-between px-6'>
+          <div className='w-32' />
           <Link href='/'>
             <img className='h-20' src='/assets/logo.png' alt='Logo' />
           </Link>
+          <div className='w-32 flex justify-end'>
+            <button
+              onClick={openDialog}
+              className='relative flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-orange-700 transition-colors shadow'
+              aria-label='Open cart'
+            >
+              <FiShoppingCart className='text-lg' />
+              <span>Cart</span>
+              {totalItems > 0 && (
+                <span className='absolute -top-1.5 -right-1.5 bg-white text-primary text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border border-primary'>
+                  {totalItems}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
         <div className='bg-gray-700 py-3 px-6 flex justify-center space-x-8 text-gray-100 text-sm font-medium'>
-          <Link
-            href='/products'
-            className={`${
-              router.pathname === '/products'
-                ? 'text-blue-500 font-semibold'
-                : 'hover:text-blue-400 transition-colors'
-            }`}
-          >
+          <Link href='/products' className={`${router.pathname === '/products' ? 'text-blue-500 font-semibold' : 'hover:text-blue-400 transition-colors'}`}>
             Products
           </Link>
-          <Link
-            href='/about-us'
-            className={`${
-              router.pathname === '/about-us'
-                ? 'text-blue-500 font-semibold'
-                : 'hover:text-blue-400 transition-colors'
-            }`}
-          >
+          <Link href='/about-us' className={`${router.pathname === '/about-us' ? 'text-blue-500 font-semibold' : 'hover:text-blue-400 transition-colors'}`}>
             About Us
           </Link>
-          <Link
-            href='/contact-us'
-            className={`${
-              router.pathname === '/contact-us'
-                ? 'text-blue-500 font-semibold'
-                : 'hover:text-blue-400 transition-colors'
-            }`}
-          >
+          <Link href='/contact-us' className={`${router.pathname === '/contact-us' ? 'text-blue-500 font-semibold' : 'hover:text-blue-400 transition-colors'}`}>
             Contact Us
           </Link>
         </div>
@@ -60,54 +60,37 @@ function Navbar() {
           <Link href='/'>
             <img className='h-12' src='/assets/logo.png' alt='Logo' />
           </Link>
-          <button
-            onClick={toggleMenu}
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-            className='text-2xl text-gray-600 hover:text-blue-500 transition-colors focus:outline-none'
-          >
-            {isMenuOpen ? <FaTimes /> : <FaBars />}
-          </button>
-        </div>
-        {/* Mobile Menu */}
-        <div
-          className={`${
-            isMenuOpen
-              ? 'max-h-64 opacity-100 px-6 py-4 bg-gray-50 shadow-inner'
-              : 'max-h-0 opacity-0'
-          } overflow-hidden transition-all duration-300 ease-in-out`}
-        >
-          <div className='flex flex-col space-y-4 text-gray-700 text-base font-medium'>
-            <Link
-              href='/products'
-              onClick={() => setIsMenuOpen(false)}
-              className={`${
-                router.pathname === '/products'
-                  ? 'text-blue-500 font-semibold'
-                  : 'hover:text-blue-500 transition-colors'
-              }`}
+          <div className='flex items-center gap-3'>
+            <button
+              onClick={openDialog}
+              className='relative p-2 text-gray-600 hover:text-primary transition-colors'
+              aria-label='Open cart'
             >
+              <FiShoppingCart className='text-2xl' />
+              {totalItems > 0 && (
+                <span className='absolute -top-0.5 -right-0.5 bg-primary text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center'>
+                  {totalItems}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={toggleMenu}
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              className='text-2xl text-gray-600 hover:text-blue-500 transition-colors focus:outline-none'
+            >
+              {isMenuOpen ? <FaTimes /> : <FaBars />}
+            </button>
+          </div>
+        </div>
+        <div className={`${isMenuOpen ? 'max-h-64 opacity-100 px-6 py-4 bg-gray-50 shadow-inner' : 'max-h-0 opacity-0'} overflow-hidden transition-all duration-300 ease-in-out`}>
+          <div className='flex flex-col space-y-4 text-gray-700 text-base font-medium'>
+            <Link href='/products' onClick={() => setIsMenuOpen(false)} className={`${router.pathname === '/products' ? 'text-blue-500 font-semibold' : 'hover:text-blue-500 transition-colors'}`}>
               Products
             </Link>
-            <Link
-              href='/about-us'
-              onClick={() => setIsMenuOpen(false)}
-              className={`${
-                router.pathname === '/about-us'
-                  ? 'text-blue-500 font-semibold'
-                  : 'hover:text-blue-500 transition-colors'
-              }`}
-            >
+            <Link href='/about-us' onClick={() => setIsMenuOpen(false)} className={`${router.pathname === '/about-us' ? 'text-blue-500 font-semibold' : 'hover:text-blue-500 transition-colors'}`}>
               About Us
             </Link>
-            <Link
-              href='/contact-us'
-              onClick={() => setIsMenuOpen(false)}
-              className={`${
-                router.pathname === '/contact-us'
-                  ? 'text-blue-500 font-semibold'
-                  : 'hover:text-blue-500 transition-colors'
-              }`}
-            >
+            <Link href='/contact-us' onClick={() => setIsMenuOpen(false)} className={`${router.pathname === '/contact-us' ? 'text-blue-500 font-semibold' : 'hover:text-blue-500 transition-colors'}`}>
               Contact Us
             </Link>
           </div>

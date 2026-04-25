@@ -1,161 +1,68 @@
-import { google } from 'googleapis';
+import { connectDB } from '@/lib/mongodb';
+import Order from '@/models/Order';
 
-export default async (req, res) => {
+export default async function handler(req, res) {
+  if (req.method === 'HEAD') {
+    await connectDB().catch(() => {});
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
+
+  const {
+    name,
+    phone,
+    deliveryZone,
+    address,
+    items,
+    totalPrice,
+    shippingCharge,
+    grandTotal,
+    orderId,
+    orderDate,
+    submissionTime,
+  } = req.body;
+
+  if (!name || !phone || !deliveryZone || !address) {
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+
+  if (!orderId) {
+    return res.status(400).json({ message: 'Order ID is required' });
+  }
+
   try {
-    if (req.method !== 'POST') {
-      return res.status(405).json({ message: 'Method not allowed' });
-    }
+    await connectDB();
 
-    console.log('Raw request body:', req.body);
-    if (!req.body || typeof req.body !== 'object') {
-      console.error('Invalid request body:', req.body);
-      return res
-        .status(400)
-        .json({ message: 'Request body is missing or invalid' });
-    }
-
-    const {
+    await Order.create({
       name,
       phone,
-      district,
+      deliveryZone,
       address,
-      items,
-      totalPrice,
-      shippingCharge,
-      grandTotal,
+      items: typeof items === 'string' ? items : JSON.stringify(items),
+      totalPrice: Number(totalPrice) || 0,
+      shippingCharge: Number(shippingCharge) || 0,
+      grandTotal: Number(grandTotal) || 0,
       orderId,
-      orderDate,
-      submissionTime,
-      sheetName,
-    } = req.body;
-
-    // Validate required fields
-    if (
-      !name ||
-      !phone ||
-      !district ||
-      !address ||
-      !items ||
-      !totalPrice ||
-      !shippingCharge ||
-      !grandTotal ||
-      !orderId ||
-      !orderDate ||
-      !submissionTime ||
-      !sheetName
-    ) {
-      return res.status(400).json({
-        message:
-          'Missing required fields: name, phone, district, address, items, totalPrice, shippingCharge, grandTotal, orderId, orderDate, submissionTime, and sheetName are required',
-      });
-    }
-
-    // Parse items (stored as JSON string)
-    let parsedItems;
-    try {
-      parsedItems = JSON.parse(items);
-    } catch (error) {
-      return res.status(400).json({
-        message: 'Invalid items format: must be valid JSON',
-      });
-    }
-
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: process.env.GOOGLE_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      },
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      orderDate: orderDate || new Date().toISOString(),
+      submissionTime:
+        submissionTime ||
+        new Date().toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }),
     });
-
-    const sheets = google.sheets({ version: 'v4', auth });
-    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
-
-    // Check if sheet has headers
-    const checkSheet = await sheets.spreadsheets.values.get({
-      spreadsheetId,
-      range: `${sheetName}!A1:J1`,
-    });
-
-    if (!checkSheet.data.values) {
-      await sheets.spreadsheets.values.update({
-        spreadsheetId,
-        range: `${sheetName}!A1:J1`,
-        valueInputOption: 'RAW',
-        resource: {
-          values: [
-            [
-              'Name',
-              'Phone',
-              'District',
-              'Address',
-              'OrderID',
-              'OrderDate',
-              'Items',
-              'TotalPrice',
-              'ShippingCharge',
-              'GrandTotal',
-            ],
-          ],
-        },
-      });
-    }
-
-    // Format items for spreadsheet
-    const itemsString = parsedItems
-      .map(
-        (item) =>
-          `${item.title} (Color: ${item.selectedColor}, Qty: ${item.quantity}, Price: ${item.price})`
-      )
-      .join('; ');
-
-    const response = await sheets.spreadsheets.values.append({
-      spreadsheetId,
-      range: `${sheetName}!A2`,
-      valueInputOption: 'USER_ENTERED',
-      resource: {
-        values: [
-          [
-            name,
-            phone,
-            district || '',
-            address || '',
-            orderId || '',
-            orderDate,
-            itemsString,
-            totalPrice || 0,
-            shippingCharge || 0,
-            grandTotal || 0,
-          ],
-        ],
-      },
-    });
-
-    console.log(`Rows updated: ${response.data.updates.updatedCells}`);
 
     return res.status(200).json({
-      message: 'Order data submitted successfully!',
-      data: {
-        name,
-        phone,
-        district,
-        address,
-        items: parsedItems,
-        totalPrice,
-        shippingCharge,
-        grandTotal,
-        orderId,
-        orderDate,
-      },
+      message: 'Order submitted successfully',
+      orderId,
     });
   } catch (error) {
-    console.error('API error:', {
-      message: error.message,
-      stack: error.stack,
-    });
-    return res.status(500).json({
-      message: 'Failed to submit order data',
-      error: error.message,
-    });
+    console.error('Order submission error:', error);
+
+    if (error.code === 11000) {
+      return res.status(409).json({ message: 'Duplicate order ID. Please try again.' });
+    }
+
+    return res.status(500).json({ message: 'Failed to submit order. Please try again.' });
   }
-};
+}
