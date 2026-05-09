@@ -339,7 +339,7 @@ export const products = [
     title: 'Hoco/Borofone Android/iOS Anti Lost Tracker',
     slug: 'anti-lost-tracker',
     model: 'E96A/BC101',
-    price: 990.0,
+    price: 999.0,
     originalPrice: 1290.0,
     sectionType: 'hot',
     inStock: true,
