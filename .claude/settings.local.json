@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"E:\\\\ecom_new\\\\src\" -Recurse -Filter \"anti-lost-tracker*\")",
+      "Bash(Select-Object FullName)"
+    ]
+  }
+}

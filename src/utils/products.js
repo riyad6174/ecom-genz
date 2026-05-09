@@ -336,23 +336,23 @@ export const products = [
   // },
   {
     id: 4,
-    title: 'Hoco/Borofone Android/iOS Anti Lost Tracker',
+    title: 'Hoco E101 Dual Mode Anti Lost Tracker',
     slug: 'anti-lost-tracker',
-    model: 'E96A/BC101',
+    model: 'E101/BC101',
     price: 999.0,
-    originalPrice: 1290.0,
+    originalPrice: 1250.0,
     sectionType: 'hot',
     inStock: true,
     thumbnail: '/assets/product/tracker/main.webp',
     description:
-      'Hoco E96A Smart Finder হলো একটি স্মার্ট ও আধুনিক সলিউশন যা আপনার মূল্যবান জিনিসপত্র হারিয়ে যাওয়া থেকে রক্ষা করবে।',
+      'Hoco E101 Smart Finder হলো একটি স্মার্ট ও আধুনিক সলিউশন যা আপনার মূল্যবান জিনিসপত্র হারিয়ে যাওয়া থেকে রক্ষা করবে।',
     images: [
-      '/assets/product/tracker/tracker1.webp',
-      '/assets/product/tracker/tracker1.jpg',
+      '/assets/product/tracker/dual-1.webp',
       '/assets/product/tracker/main2.webp',
       '/assets/product/tracker/main.webp',
-    ], // 💡 UPDATED VARIANTS TO USE 'TYPE' INSTEAD OF 'COLOR'
-    variants: [{ type: 'Android' }, { type: 'iOS' }],
+      '/assets/product/tracker/dual-2.webp',
+    ],
+    variants: [{ type: 'Android + iOS' }, { type: 'iOS' }],
   },
   // {
   //   id: 2,

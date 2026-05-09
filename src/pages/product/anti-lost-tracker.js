@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { GoShareAndroid } from 'react-icons/go';
 import {
@@ -18,13 +18,10 @@ import { products } from '@/utils/products';
 import { addToCart } from '@/store/cartSlice';
 import { useCartDialog } from '@/context/CartDialogContext';
 import Footer from '@/components/common/Footer';
-import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-// Find the specific product for this page
 const productData = products.find((p) => p.slug === 'anti-lost-tracker');
 
-// Helper functions
 const getVariantKey = (variants) => {
   if (!variants || variants.length === 0) return null;
   return Object.keys(variants[0]).find((key) => key !== 'id') || null;
@@ -39,9 +36,8 @@ const ProductDetails = ({ initialProduct }) => {
   const dispatch = useDispatch();
   const { openDialog } = useCartDialog();
   const viewItemFired = useRef(false);
-  const router = useRouter();
   const [product, setProduct] = useState(initialProduct);
-  const [selectedColor, setselectedColor] = useState('');
+  const [selectedVariant, setSelectedVariant] = useState('Android + iOS');
   const [activeImage, setActiveImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [variantKey, setVariantKey] = useState(null);
@@ -53,155 +49,134 @@ const ProductDetails = ({ initialProduct }) => {
       setProduct(initialProduct);
       const key = getVariantKey(initialProduct.variants);
       setVariantKey(key);
-      setselectedColor(
+      setSelectedVariant(
         initialProduct.variants[0] ? initialProduct.variants[0][key] : ''
       );
       setActiveImage(initialProduct.images[0] || '');
 
-      // GTM Data Layer Push (only on client-side)
-      if (typeof window !== 'undefined') {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: 'view_item',
-          ecommerce: {
-            items: [
-              {
-                item_id: initialProduct.id || 'unknown',
-                item_name: initialProduct.title || 'unknown',
-                price: initialProduct.price || 0,
-                original_price: initialProduct.originalPrice || 0,
-                item_category: initialProduct.title.includes('Smart Watch')
-                  ? 'Wearables'
-                  : key === 'type'
-                  ? 'Tracker'
-                  : 'Accessories',
-                item_variant: initialProduct.variants
-                  ? initialProduct.variants
-                      .map((v) => getVariantValue(v))
-                      .join(', ')
-                  : 'unknown',
-              },
-            ],
-            currency: 'BDT',
-            value: initialProduct.price || 0,
-          },
-        });
-      }
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ ecommerce: null });
+      window.dataLayer.push({
+        event: 'view_item',
+        ecommerce: {
+          items: [
+            {
+              item_id: initialProduct.id || 'unknown',
+              item_name: initialProduct.title || 'unknown',
+              price: initialProduct.price || 0,
+              original_price: initialProduct.originalPrice || 0,
+              item_category: 'Trackers',
+              item_variant:
+                initialProduct.variants?.[0]?.type ||
+                initialProduct.variants?.[0]?.color ||
+                'unknown',
+            },
+          ],
+          currency: 'BDT',
+          value: initialProduct.price || 0,
+        },
+      });
     }
   }, [initialProduct]);
 
-  const handleImageClick = (image) => {
-    setActiveImage(image);
-  };
+  const handleImageClick = (image) => setActiveImage(image);
 
-  const handleVariantChange = (value) => {
-    setselectedColor(value);
+  const handleVariantChange = (variant) => {
+    const value = getVariantValue(variant);
+    setSelectedVariant(value);
   };
 
   const handleQuantityChange = (type) => {
-    if (type === 'increment' && quantity < 999) {
-      setQuantity(quantity + 1);
-    } else if (type === 'decrement' && quantity > 1) {
-      setQuantity(quantity - 1);
-    }
+    if (type === 'increment' && quantity < 999) setQuantity(quantity + 1);
+    else if (type === 'decrement' && quantity > 1) setQuantity(quantity - 1);
   };
 
   const handleBuyNow = () => {
-    if (product) {
-      if (typeof window !== 'undefined') {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: 'add_to_cart',
-          ecommerce: {
-            currency: 'BDT',
-            value: product.price * quantity || 0,
-            items: [
-              {
-                item_id: product.id || 'unknown',
-                item_name: product.title || 'unknown',
-                price: product.price || 0,
-                original_price: product.originalPrice || 0,
-                item_category: 'Wearables',
-                item_variant: selectedColor || 'unknown',
-                quantity: quantity || 1,
-              },
-            ],
+    if (!product) return;
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: 'add_to_cart',
+      ecommerce: {
+        currency: 'BDT',
+        value: product.price * quantity || 0,
+        items: [
+          {
+            item_id: product.id || 'unknown',
+            item_name: product.title || 'unknown',
+            price: product.price || 0,
+            original_price: product.originalPrice || 0,
+            item_category: 'Trackers',
+            item_variant: selectedVariant || 'unknown',
+            quantity: quantity || 1,
           },
-        });
-      }
-      dispatch(
-        addToCart({
-          id: product.id,
-          title: product.title,
-          slug: product.slug,
-          price: product.price,
-          selectedColor,
-          quantity,
-          image: activeImage,
-          variantKey,
-        })
-      );
-      openDialog();
-    }
+        ],
+      },
+    });
+
+    dispatch(
+      addToCart({
+        id: product.id,
+        title: product.title,
+        slug: product.slug,
+        price: product.price,
+        selectedColor: selectedVariant,
+        quantity,
+        image: activeImage,
+        variantKey,
+      })
+    );
+    openDialog();
   };
 
   if (!product) {
     return (
       <div className='text-center py-10 text-gray-600 font-mont text-lg'>
-        পণ্য খুঁজে পাওয়া যায়নি
+        পণ্য খুঁজে পাওয়া যায়নি
       </div>
     );
   }
 
-  const variantTitle = variantKey
-    ? `একটি ${variantKey === 'color' ? 'রং' : 'ধরণ'} নির্বাচন করুন`
-    : 'ভেরিয়েন্ট';
-
-  const renderVariantButton = (variant) => {
-    const value = getVariantValue(variant);
-    if (variantKey === 'color') {
-      return (
-        <button
-          className='w-8 h-8 rounded-full focus:outline-none'
-          style={{
-            backgroundColor: value ? value.toLowerCase() : 'transparent',
-          }}
-        ></button>
-      );
-    } else if (variantKey === 'type') {
-      return (
-        <div className='flex items-center gap-2'>
-          {value === 'iOS' && <FaApple className='text-xl text-gray-800' />}
-          {value === 'Android' && (
-            <FaAndroid className='text-xl text-gray-800' />
-          )}
-          <span className='text-sm font-semibold'>{value}</span>
-        </div>
-      );
+  const getVariantTitle = () => {
+    if (product.variants && product.variants.length > 0) {
+      const firstVariant = product.variants[0];
+      if (firstVariant.color) return 'কালার সিলেক্ট করুন';
+      if (firstVariant.type) return 'মডেল সিলেক্ট করুন';
     }
-    return null;
+    return 'ভেরিয়েন্ট সিলেক্ট করুন';
   };
 
   const faqData = [
     {
-      question: 'এই ট্র্যাকারটি কি Android এবং iOS-এর সাথে কাজ করে?',
+      question: 'এই ট্র্যাকারগুলো কি Android এবং iOS-এর সাথে কাজ করে?',
       answer:
-        'জ্বী, এন্ড্রোয়েড এবং আইওএস এর জন্য দুটি ভিন্ন ভেরিয়েন্টে পাওয়া যায়। কেনার সময় আপনার পছন্দের ভেরিয়েন্টটি নির্বাচন করতে পারবেন।',
+        'Hoco E101 ডুয়াল মোডটি Android এবং iOS উভয় অপারেটিং সিস্টেমের সাথে কাজ করে। Borofone ট্র্যাকারটি শুধুমাত্র iOS ডিভাইসের জন্য ডিজাইন করা হয়েছে। কেনার সময় আপনার পছন্দের মডেলটি নির্বাচন করুন।',
     },
     {
       question: 'ট্র্যাকার হারিয়ে গেলে কি লোকেশন দেখা যাবে?',
       answer:
-        'অবশ্যই! এটি Google Find Hub (Android-এর জন্য) অথবা Apple Find My (iOS-এর জন্য) নেটওয়ার্ক ব্যবহার করে। ফলে অন্য ব্যবহারকারীদের ডিভাইসের মাধ্যমে ট্র্যাকারটির লোকেশন ম্যাপে দেখা যাবে।',
+        'হ্যাঁ! Hoco E101 Google Find Hub (Android-এর জন্য) এবং Apple Find My (iOS-এর জন্য) নেটওয়ার্ক উভয়ের সাথেই কাজ করে। Borofone শুধুমাত্র Apple Find My নেটওয়ার্ক ব্যবহার করে। ফলে অন্য ব্যবহারকারীদের ডিভাইসের মাধ্যমে ট্র্যাকারটির লোকেশন ম্যাপে দেখা যাবে।',
     },
     {
-      question: 'ব্যাটারি কতদিন চলে এবং এটি কি পরিবর্তন করা যায়?',
+      question: 'ব্যাটারি কতদিন চলে এবং এটি কি পরিবর্তন করা যায়?',
       answer:
-        'সাধারণত একটি CR2032 বোতাম ব্যাটারি 9 থেকে 12 মাস পর্যন্ত চলতে পারে। ব্যাটারি শেষ হলে আপনি নিজেই তা খুব সহজে পরিবর্তন করতে পারবেন।',
+        'Hoco E101 একটি CR2032 (210 mAh) বোতাম ব্যাটারি ব্যবহার করে যা প্রায় 6-8 মাস পর্যন্ত চলে। Borofone ট্র্যাকারটিও CR2032 ব্যাটারি ব্যবহার করে যা 9-12 মাস পর্যন্ত চলে। ব্যাটারি শেষ হলে আপনি নিজেই খুব সহজে পরিবর্তন করতে পারবেন।',
     },
     {
-      question: 'ট্র্যাকারটি কি ওয়াটারপ্রুফ?',
+      question: 'ট্র্যাকারগুলো কি ওয়াটারপ্রুফ?',
       answer:
-        'হ্যাঁ, এটি IP65 রেটিং সহ ওয়াটার-রেজিস্ট্যান্ট। অর্থাৎ সামান্য বৃষ্টি বা জলের ছিটা লাগলে কোনো সমস্যা হবে না। তবে এটি পুরোপুরি জলে ডুবানো উচিত নয়।',
+        'হ্যাঁ, Hoco E101 IPX5 ওয়াটার রেজিস্ট্যান্ট রেটিং পেয়েছে, যা হালকা বৃষ্টি এবং জলের ছিটা থেকে সুরক্ষা দেয়। Borofone ট্র্যাকারটি IP65 রেটিং সহ ওয়াটার-রেজিস্ট্যান্ট। তবে কোনোটিই সম্পূর্ণ জলে ডুবানোর জন্য নয়।',
+    },
+    {
+      question: 'একাধিক ট্র্যাকার একই অ্যাপে ম্যানেজ করা যাবে?',
+      answer:
+        'হ্যাঁ, আপনি Google Find Hub বা Apple Find My অ্যাপে একাধিক ট্র্যাকার যুক্ত করতে পারবেন। প্রতিটি ট্র্যাকার আলাদাভাবে ম্যানেজ এবং ট্র্যাক করা যাবে।',
+    },
+    {
+      question: 'ট্র্যাকারের রেঞ্জ কত দূরত্ব পর্যন্ত?',
+      answer:
+        'ব্লুটুথ রেঞ্জ প্রায় 30-50 মিটার (লাইনে অফ সাইটে)। তবে নেটওয়ার্কের মাধ্যমে পুরো বিশ্বের যেকোনো জায়গা থেকে লোকেশন ট্র্যাক করা যাবে।',
     },
   ];
 
@@ -209,30 +184,40 @@ const ProductDetails = ({ initialProduct }) => {
     {
       name: 'আরিফ হোসেন',
       rating: 5,
-      text: 'অ্যান্ড্রয়েড ভার্সনটি নিয়েছি, দারুণ কাজ করে! চাবির রিং-এ লাগিয়ে রেখেছি, আর ভুল করে চাবি রেখে চলে গেলে সাথে সাথে নোটিফিকেশন আসছে। খুবই কাজের একটি ডিভাইস।',
+      text: 'Hoco E101 ডুয়াল মোডটি নিয়েছি, দারুণ কাজ করে! আমার একসাথে Android ফোন এবং iPad আছে, দুটোতেই পারফেক্টলি কাজ করছে। চাবির রিং-এ লাগিয়ে রেখেছি, আর ভুল করে চাবি রেখে চলে গেলে সাথে সাথে নোটিফিকেশন আসছে।',
     },
     {
-      name: 'সুমাইয়া রহমান',
+      name: 'সুমাইয়া রহমান',
+      rating: 5,
+      text: 'Borofone iOS ভার্সনটি আইফোনের জন্য পারফেক্ট। ফাইন্ড মাই অ্যাপে খুব দ্রুত লোকেশন আপডেট হয় এবং ব্যাটারি লাইফ দারুণ। ব্যাগের জন্য কিনেছি, এখন আর দুশ্চিন্তা করতে হয় না।',
+    },
+    {
+      name: 'রাকিবুল ইসলাম',
       rating: 4,
-      text: 'আইওএস-এর জন্য পারফেক্ট। ফাইন্ড মাই অ্যাপে খুব দ্রুত লোকেশন আপডেট হয়। ব্যাগের জন্য কিনেছি, এখন আর দুশ্চিন্তা করতে হয় না।',
+      text: 'Hoco E101-এর সাইজটা খুবই কম্প্যাক্ট এবং হালকা। কার চাবির গোছায় লাগিয়ে দিয়েছি, ওজনই টের পাওয়া যায় না। ডুয়াল মোড হওয়ায় পরিবারের সবার সাথে শেয়ার করা যায়।',
+    },
+    {
+      name: 'তানজিনা আক্তার',
+      rating: 5,
+      text: 'Borofone ট্র্যাকারটি আমার বাচ্চার স্কুল ব্যাগে লাগিয়েছি। স্কুল থেকে ফেরার সময় ব্যাগ কোথায় আছে তা সহজেই দেখতে পারি। বাচ্চা নিরাপদে থাকলে মা-বাবার চিন্তা কমে যায়।',
     },
   ];
 
   return (
     <>
       <Head>
-        <title>Hoco/Borofone Anti-Lost Tracker | GenZ Shop</title>
+        <title>Hoco E101 & Borofone Anti-Lost Tracker | Genz Shop</title>
         <meta
           name='description'
-          content='Discover the Hoco/Borofone  Anti-Lost Tracker at GenZ Shop. Compatible with Apple Find My and Google Find Hub, IP65 water-resistant, with up to 12 months battery life.'
+          content='Hoco E101 ডুয়াল মোড (Android + iOS) এবং Borofone iOS Anti-Lost Tracker কিনুন Genz Shop-এ। IPX5/IP65 ওয়াটার রেজিস্ট্যান্ট, 6-12 মাস ব্যাটারি লাইফ সহ।'
         />
         <meta
           property='og:title'
-          content='Hoco/Borofone  Anti-Lost Tracker | GenZ Shop'
+          content='Hoco E101 & Borofone Anti-Lost Tracker | Genz Shop'
         />
         <meta
           property='og:description'
-          content='Keep track of your valuables with the Hoco/Borofone Anti-Lost Tracker. Supports iOS and Android, IP65 water-resistant, and long-lasting battery.'
+          content='আপনার মূল্যবান জিনিসপত্র ট্র্যাক করুন Hoco E101 ডুয়াল মোড এবং Borofone iOS ট্র্যাকার দিয়ে। Android ও iOS সাপোর্ট, ওয়াটার রেজিস্ট্যান্ট, লং ব্যাটারি লাইফ।'
         />
         <meta
           property='og:url'
@@ -243,11 +228,11 @@ const ProductDetails = ({ initialProduct }) => {
         <meta name='twitter:card' content='summary_large_image' />
         <meta
           name='twitter:title'
-          content='Hoco/Borofone  Anti-Lost Tracker | GenZ Shop'
+          content='Hoco E101 & Borofone Anti-Lost Tracker | Genz Shop'
         />
         <meta
           name='twitter:description'
-          content='Track your keys, bags, or wallet with the Hoco/Borofone Anti-Lost Tracker. IP65 water-resistant, iOS/Android compatible, long battery life.'
+          content='আপনার চাবি, ব্যাগ, ওয়ালেট ট্র্যাক করুন Hoco E101 (Android+iOS) এবং Borofone (iOS) ট্র্যাকার দিয়ে। Genz Shop থেকে কিনুন।'
         />
         <meta name='twitter:image' content={product.images[0]} />
         <script
@@ -258,11 +243,12 @@ const ProductDetails = ({ initialProduct }) => {
               '@type': 'Product',
               name: product.title,
               image: product.images,
-              description: 'Hoco/Borofone  Anti-Lost Tracker | GenZ Shop',
+              description:
+                'Hoco E101 ডুয়াল মোড এবং Borofone iOS Anti-Lost Tracker',
               sku: product.id,
               brand: {
                 '@type': 'Brand',
-                name: 'Borofone',
+                name: 'Hoco & Borofone',
               },
               offers: {
                 '@type': 'Offer',
@@ -292,7 +278,7 @@ const ProductDetails = ({ initialProduct }) => {
             border-width: 2px;
           }
           .small-image-active {
-            border-color: #a4dd00;
+            border-color: #3b82f6;
             opacity: 1;
           }
           .small-image-inactive {
@@ -306,7 +292,7 @@ const ProductDetails = ({ initialProduct }) => {
           .variant-button-active {
             border-color: #3b82f6 !important;
             transform: scale(1.05);
-            background-color: #a4dd00;
+            background-color: #eff6ff;
           }
         `}</style>
         <div className='bg-white py-4 sm:py-6 rounded-xl shadow-lg'>
@@ -353,53 +339,71 @@ const ProductDetails = ({ initialProduct }) => {
                 </div>
               </div>
             </div>
+
             {/* Product Details */}
             <div className='w-full lg:w-2/5 px-4 sm:px-6 py-4'>
               <h2 className='text-lg sm:text-xl lg:text-2xl font-semibold font-mont text-gray-800 mb-2 sm:mb-4'>
                 {product.title}
               </h2>
               <p className='text-gray-600 text-sm sm:text-base font-mont mb-4'>
-                {product.description}
+                Hoco E101 ডুয়াল মোড (Android + iOS) এবং Borofone iOS
+                অ্যান্টি-লস্ট ট্র্যাকার। আপনার মূল্যবান জিনিসপত্র হারানোর
+                চিন্তা দূর করুন। স্মার্ট ট্র্যাকিং টেকনোলজি দিয়ে সবসময় জানুন
+                আপনার চাবি, ব্যাগ, ওয়ালেট কোথায় আছে।
               </p>
-              {product.variants &&
-                product.variants.length > 0 &&
-                variantKey && (
-                  <div className='mb-6'>
-                    <span className='font-semibold text-gray-700 text-sm sm:text-base'>
-                      {variantTitle}
-                    </span>
-                    <div className='flex flex-col md:flex row items-start md:items-start gap-3 mt-4 flex-wrap'>
-                      {product.variants.map((variant, index) => {
-                        const value = getVariantValue(variant);
-                        return (
-                          <div
-                            key={index}
-                            className={`border-2 flex items-center justify-center rounded-lg cursor-pointer variant-button ${
-                              variantKey === 'color'
-                                ? 'p-1'
-                                : 'px-4 py-2 text-gray-800 border-gray-300 hover:bg-gray-100'
-                            } ${
-                              selectedColor === value
-                                ? 'variant-button-active'
-                                : ''
-                            }`}
-                            onClick={() => handleVariantChange(value)}
-                          >
-                            {renderVariantButton(variant)}
-                          </div>
-                        );
-                      })}
-                    </div>
+
+              {/* Variant Section */}
+              {product.variants && product.variants.length > 0 && variantKey && (
+                <div className='mb-6'>
+                  <span className='font-semibold text-gray-700 text-sm sm:text-base'>
+                    {getVariantTitle()}
+                  </span>
+                  <div className='flex flex-col md:flex-row items-start gap-3 mt-4 flex-wrap'>
+                    {product.variants.map((variant, index) => {
+                      const value = getVariantValue(variant);
+                      const isSelected = selectedVariant === value;
+                      return (
+                        <div
+                          key={index}
+                          className={`border-2 flex items-center justify-center rounded-lg cursor-pointer variant-button px-4 py-2 text-gray-800 border-gray-300 hover:bg-gray-100 ${
+                            isSelected ? 'variant-button-active' : ''
+                          }`}
+                          onClick={() => handleVariantChange(variant)}
+                        >
+                          {value === 'Android + iOS' ? (
+                            <div className='flex items-center gap-2'>
+                              <FaAndroid className='text-xl text-green-600' />
+                              <FaApple className='text-xl text-gray-800' />
+                              <span className='text-sm font-semibold'>
+                                Hoco E101 ডুয়াল মোড
+                              </span>
+                            </div>
+                          ) : value === 'iOS' ? (
+                            <div className='flex items-center gap-2'>
+                              <FaApple className='text-xl text-gray-800' />
+                              <span className='text-sm font-semibold'>
+                                Borofone iOS ভার্সন
+                              </span>
+                            </div>
+                          ) : (
+                            <span className='text-sm font-semibold'>{value}</span>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
+                </div>
+              )}
+
               <div className='flex items-center justify-start gap-2 text-md mb-6'>
-                <span className='text-black font-bold text-lg sm:text-xl'>
+                <span className='text-blue-600 font-bold text-lg sm:text-xl'>
                   ৳ {product.price.toFixed(2)}
                 </span>
                 <span className='text-gray-500 font-normal text-base sm:text-lg line-through'>
                   ৳ {product.originalPrice.toFixed(2)}
                 </span>
               </div>
+
               <div className='flex items-center justify-start gap-4 mb-6'>
                 <div className='flex items-center border border-gray-400 rounded-lg bg-white'>
                   <button
@@ -453,115 +457,231 @@ const ProductDetails = ({ initialProduct }) => {
                 </div>
                 <button
                   onClick={handleBuyNow}
-                  className='flex items-center bg-primary text-black justify-center gap-2 border border-primary px-4 sm:px-6 py-2 sm:py-3 rounded-md font-mont font-semibold text-sm'
+                  className='flex items-center bg-gradient-to-r from-blue-700 to-blue-900 text-white justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-md font-mont font-semibold text-sm hover:from-blue-800 hover:to-blue-950 transition-all shadow-md disabled:opacity-70'
                   disabled={!product.inStock}
                 >
                   <span>{product.inStock ? 'এখনই কিনুন' : 'স্টক নেই'}</span>
                 </button>
               </div>
+
+              {/* Quick Features */}
+              <div className='mt-8 p-4 bg-gray-50 rounded-lg'>
+                <h3 className='font-semibold text-gray-800 mb-3'>
+                  দ্রুত বৈশিষ্ট্যসমূহ:
+                </h3>
+                <div className='grid grid-cols-2 gap-3'>
+                  <div className='flex items-center gap-2'>
+                    <FaSyncAlt className='text-blue-500' />
+                    <span className='text-sm'>ডুয়াল মোড সাপোর্ট</span>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <FaBatteryHalf className='text-green-500' />
+                    <span className='text-sm'>9-12 মাস ব্যাটারি</span>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <FaMapMarkerAlt className='text-red-500' />
+                    <span className='text-sm'>গ্লোবাল ট্র্যাকিং</span>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <FaLock className='text-purple-500' />
+                    <span className='text-sm'>ওয়াটার রেজিস্ট্যান্ট</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
       <CustomSection>
         <div className='px-3 sm:px-4'>
-          <div className='bg-white p-4 sm:p-5 rounded-lg'>
+          {/* Product Description */}
+          <div className='bg-white p-4 sm:p-5 rounded-lg shadow-sm'>
             <h2 className='text-lg sm:text-xl font-semibold mb-3'>
               পণ্যের বিবরণ
             </h2>
-            <p className='text-gray-600 font-mont text-sm sm:text-base'>
+            <p className='text-gray-600 font-mont text-sm sm:text-base mb-4'>
               আপনার মূল্যবান জিনিসপত্রের খোঁজ রাখুন{' '}
-              <strong>Hoco/Borofone অ্যান্টি-লস্ট ট্র্যাকার</strong>-এর মাধ্যমে।
-              এটি একটি মসৃণ ও কম্প্যাক্ট ডিভাইস যা আপনার জিনিসপত্র সুরক্ষিত
-              রাখতে সাহায্য করবে। এটি <strong>Google Find Hub</strong> (Android)
-              এবং <strong>Apple Find My</strong> (iOS)-এর সাথে কাজ করার জন্য
-              ডিজাইন করা হয়েছে।
+              <strong>
+                Hoco E101 ডুয়াল মোড এবং Borofone অ্যান্টি-লস্ট ট্র্যাকার
+              </strong>
+              -এর মাধ্যমে। এই স্মার্ট ট্র্যাকারগুলো আপনার চাবি, ব্যাগ, ওয়ালেট,
+              লাগেজ এমনকি পোষা প্রাণীর লোকেশনও ট্র্যাক করতে সক্ষম। সম্পূর্ণ
+              বিল্ট-ইন নেটওয়ার্ক সাপোর্টের মাধ্যমে বিশ্বব্যাপী কোটি কোটি
+              ডিভাইসের সাথে কানেক্টেড থাকে আপনার ট্র্যাকারটি।
             </p>
+
+            <div className='my-6 rounded-lg overflow-hidden border border-gray-200'>
+              <img
+                src='/assets/product/tracker/dual.webp'
+                alt='Hoco E101 vs Borofone Tracker Comparison'
+                className='w-full rounded-lg'
+                style={{ width: '100%', height: 'auto' }}
+              />
+            </div>
+
             <p className='py-4 sm:py-5 text-gray-600 font-mont text-sm sm:text-base font-semibold'>
-              মূল বৈশিষ্ট্যসমূহ:
+              Hoco E101 ডুয়াল মোড ট্র্যাকারের মূল বৈশিষ্ট্যসমূহ:
             </p>
-            <ul className='space-y-3 text-gray-700 font-mont text-sm sm:text-base'>
-              <li className='flex flex-col md:flex row items-start md:items-start gap-3'>
-                <span className='font-semibold'>
-                  Works with Android Find My Device:
-                </span>{' '}
-                সরাসরি Google Find Hub অ্যাপে ট্র্যাক করা যাবে।
+            <ul className='space-y-3 text-gray-700 font-mont text-sm sm:text-base mb-6'>
+              <li className='flex items-start gap-3'>
+                <FaSyncAlt className='text-blue-500 mt-1 flex-shrink-0' />
+                <span>
+                  <strong>ডুয়াল-নেটওয়ার্ক ট্র্যাকিং কম্প্যাটিবিলিটি:</strong>{' '}
+                  Apple Find My নেটওয়ার্ক এবং Google Find My Device উভয়ের সাথে
+                  কাজ করে। iOS এবং Android উভয় প্ল্যাটফর্ম থেকে ট্র্যাক করতে
+                  পারবেন।
+                </span>
               </li>
-              <li className='flex flex-col md:flex row items-start md:items-start gap-3'>
-                <span className='font-semibold'>Works with Apple Find My:</span>{' '}
-                Apple-এর নিজস্ব নেটওয়ার্কের মাধ্যমেও লোকেশন জানা যায় (iOS
-                ভেরিয়েন্টের জন্য)।
+              <li className='flex items-start gap-3'>
+                <FaApple className='text-gray-700 mt-1 flex-shrink-0' />
+                <span>
+                  <strong>আল্ট্রা-কম্প্যাক্ট ও হালকা ডিজাইন:</strong> মাত্র ৩২ ×
+                  ৩২ × ৭ মিমি সাইজ এবং মাত্র ৭.৫ গ্রাম ওজন। চাবির রিং বা ব্যাগে
+                  লাগানোর জন্য পারফেক্ট।
+                </span>
               </li>
-              <li className='flex flex-col md:flex row items-start md:items-start gap-3'>
-                <span className='font-semibold'>
-                  Global Positioning Support:
-                </span>{' '}
-                হারিয়ে গেলে সরাসরি ম্যাপে সঠিক লোকেশন দেখা যাবে।
+              <li className='flex items-start gap-3'>
+                <FaBatteryHalf className='text-green-500 mt-1 flex-shrink-0' />
+                <span>
+                  <strong>দীর্ঘস্থায়ী ব্যাটারি:</strong> CR2032 (210 mAh)
+                  রিপ্লেসেবল বোতাম ব্যাটারি যা প্রায় ৬-৮ মাস পর্যন্ত চলে।
+                  বারবার চার্জ করার ঝামেলা নেই।
+                </span>
               </li>
-              <li className='flex flex-col md:flex row items-start md:items-start gap-3'>
-                <span className='font-semibold'>Privacy Protection:</span>{' '}
-                গুগল/অ্যাপলের সিকিউরিটি সিস্টেমে আপনার তথ্য সম্পূর্ণ সুরক্ষিত।
+              <li className='flex items-start gap-3'>
+                <FaAndroid className='text-green-600 mt-1 flex-shrink-0' />
+                <span>
+                  <strong>সহজ সেটআপ ও ওয়াইড কম্প্যাটিবিলিটি:</strong>{' '}
+                  সাম্প্রতিক সব iOS এবং Android ডিভাইসের সাথে কাজ করে। ফোন,
+                  ট্যাবলেট, এক্সেসরিজ সবকিছুর সাথে কম্প্যাটিবল।
+                </span>
               </li>
-              <li className='flex flex-col md:flex row items-start md:items-start gap-3'>
-                <span className='font-semibold'>Replaceable Battery:</span>{' '}
-                ব্যাটারি শেষ হলে সহজেই নতুন CR2032 ব্যাটারি ব্যবহার করা যাবে
-                (9-12 মাস ব্যাটারি লাইফ)।
-              </li>
-              <li className='flex flex-col md:flex row items-start md:items-start gap-3'>
-                <span className='font-semibold'>Compact & Portable:</span> ছোট,
-                হালকা ও সহজে বহনযোগ্য (চাবি, ব্যাগ বা ওয়ালেটে লাগানো যাবে)।
-              </li>
-              <li className='flex flex-col md:flex row items-start md:items-start gap-3'>
-                <span className='font-semibold'>Multi-Usage:</span> চাবি, ব্যাগ,
-                লাগেজ, ওয়ালেট, এমনকি পোষা প্রাণীর জন্যও ব্যবহারযোগ্য।
+              <li className='flex items-start gap-3'>
+                <FaMapMarkerAlt className='text-red-500 mt-1 flex-shrink-0' />
+                <span>
+                  <strong>ফ্লেক্সিবল প্লেসমেন্ট ও ব্যবহার:</strong> চাবিতে
+                  লাগান, গাড়ির ভিতরে মাউন্ট করুন, লাগেজে লাগান বা পোষা প্রাণীর
+                  কলারে এটাচ করুন। হারানোর চিন্তা দূর করুন।
+                </span>
               </li>
             </ul>
+
+            <p className='py-4 sm:py-5 text-gray-600 font-mont text-sm sm:text-base font-semibold'>
+              Borofone iOS ট্র্যাকারের মূল বৈশিষ্ট্যসমূহ:
+            </p>
+            <ul className='space-y-3 text-gray-700 font-mont text-sm sm:text-base mb-6'>
+              <li className='flex items-start gap-3'>
+                <FaApple className='text-gray-800 mt-1 flex-shrink-0' />
+                <span>
+                  <strong>Apple Find My নেটওয়ার্ক সাপোর্ট:</strong> শুধুমাত্র
+                  iOS ডিভাইসের জন্য অপটিমাইজড। Apple-এর নিজস্ব সিকিউর নেটওয়ার্ক
+                  ব্যবহার করে।
+                </span>
+              </li>
+              <li className='flex items-start gap-3'>
+                <FaLock className='text-blue-600 mt-1 flex-shrink-0' />
+                <span>
+                  <strong>প্রাইভেসি প্রোটেকশন:</strong> এন্ড-টু-এন্ড এনক্রিপশনের
+                  মাধ্যমে আপনার লোকেশন ডেটা সম্পূর্ণ সুরক্ষিত।
+                </span>
+              </li>
+              <li className='flex items-start gap-3'>
+                <FaBatteryHalf className='text-green-500 mt-1 flex-shrink-0' />
+                <span>
+                  <strong>লং-লাস্টিং ব্যাটারি:</strong> ৯-১২ মাস পর্যন্ত
+                  ব্যাটারি লাইফ সহ CR2032 রিপ্লেসেবল ব্যাটারি।
+                </span>
+              </li>
+              <li className='flex items-start gap-3'>
+                <GoShareAndroid className='text-gray-700 mt-1 flex-shrink-0' />
+                <span>
+                  <strong>শেয়ারিং সুবিধা:</strong> পরিবারের সদস্য বা বন্ধুদের
+                  সাথে ট্র্যাকার শেয়ার করতে পারেন।
+                </span>
+              </li>
+              <li className='flex items-start gap-3'>
+                <FaMapMarkerAlt className='text-red-500 mt-1 flex-shrink-0' />
+                <span>
+                  <strong>IP65 ওয়াটার রেজিস্ট্যান্ট:</strong> হালকা বৃষ্টি ও
+                  জলের ছিটা থেকে সুরক্ষা। দৈনন্দিন ব্যবহারের জন্য উপযুক্ত।
+                </span>
+              </li>
+            </ul>
+
+            <div className='mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100'>
+              <h3 className='font-semibold text-blue-800 mb-2'>
+                কোন মডেলটি আপনার জন্য সঠিক?
+              </h3>
+              <p className='text-gray-700 text-sm'>
+                <strong>Hoco E101 ডুয়াল মোড:</strong> যদি আপনার পরিবারে Android
+                এবং iOS উভয় ডিভাইস থাকে, অথবা ভবিষ্যতে প্ল্যাটফর্ম পরিবর্তন
+                করার সম্ভাবনা থাকে।
+                <br />
+                <strong>Borofone iOS ভার্সন:</strong> যদি আপনি শুধুমাত্র iPhone,
+                iPad বা Mac ব্যবহার করেন এবং Apple একোসিস্টেমে পুরোপুরি থাকেন।
+              </p>
+            </div>
           </div>
-          <div className='bg-white p-4 sm:p-5 rounded-lg mt-4 sm:mt-6'>
+
+          {/* User Guide */}
+          <div className='bg-white p-4 sm:p-5 rounded-lg shadow-sm mt-6'>
             <h2 className='text-lg sm:text-xl font-semibold flex items-center gap-2 mb-3'>
               <FaUser className='text-blue-500' /> ইউজার গাইড
             </h2>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6'>
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
               <div>
-                <p className='text-gray-600 font-mont text-sm sm:text-base'>
+                <p className='text-gray-600 font-mont text-sm sm:text-base mb-4'>
                   আপনার <strong>অ্যান্টি-লস্ট ট্র্যাকার</strong> ব্যবহার শুরু
                   করতে এই সহজ ধাপগুলো অনুসরণ করুন:
                 </p>
-                <ol className='list-decimal list-inside text-gray-600 font-mont text-sm sm:text-base mt-4 space-y-3'>
-                  <li>
-                    <span className='font-semibold'>ব্যাটারি স্থাপন:</span>{' '}
+                <ol className='list-decimal list-inside text-gray-600 font-mont text-sm sm:text-base space-y-4'>
+                  <li className='pb-3 border-b border-gray-100'>
+                    <span className='font-semibold text-gray-800'>
+                      ব্যাটারি স্থাপন:
+                    </span>{' '}
                     ট্র্যাকারটির পেছনের কভার খুলে CR2032 বোতাম ব্যাটারিটি প্রবেশ
                     করান। (+) চিহ্ন উপরে রেখে কভারটি শক্তভাবে বন্ধ করুন।
                   </li>
-                  <li>
-                    <span className='font-semibold'>পেয়ারিং শুরু:</span>{' '}
-                    ট্র্যাকারের বাটনটি চাপুন এবং ধরে রাখুন যতক্ষণ না এটি শব্দ
-                    করে পেয়ারিং মোডে যায়।
+                  <li className='pb-3 border-b border-gray-100'>
+                    <span className='font-semibold text-gray-800'>
+                      পেয়ারিং শুরু:
+                    </span>{' '}
+                    ট্র্যাকারের বাটনটি 3 সেকেন্ডের জন্য চাপুন এবং ধরে রাখুন
+                    যতক্ষণ না এটি শব্দ করে বা LED জ্বলে পেয়ারিং মোডে যায়।
                   </li>
-                  <li>
-                    <span className='font-semibold'>অ্যাপের সাথে সংযোগ:</span>
-                    <ul className='list-disc list-inside ml-5 mt-1 space-y-1'>
+                  <li className='pb-3 border-b border-gray-100'>
+                    <span className='font-semibold text-gray-800'>
+                      অ্যাপের সাথে সংযোগ:
+                    </span>
+                    <ul className='list-disc list-inside ml-5 mt-2 space-y-2'>
                       <li>
-                        <strong>Android-এর জন্য:</strong> আপনার ফোনে{' '}
-                        <strong>Google Find Hub</strong> অ্যাপটি খুলুন এবং
-                        কাছাকাছি ডিভাইস হিসেবে ট্র্যাকারটি যুক্ত করুন।
+                        <strong className='text-green-600'>
+                          Android-এর জন্য:
+                        </strong>{' '}
+                        আপনার ফোনে <strong>Google Find Hub</strong> অ্যাপটি
+                        খুলুন এবং কাছাকাছি ডিভাইস হিসেবে ট্র্যাকারটি যুক্ত করুন।
                       </li>
                       <li>
-                        <strong>iOS-এর জন্য:</strong> <strong>Find My</strong>{' '}
-                        অ্যাপে যান, 'Items' ট্যাবে (+) আইকনে ট্যাপ করে 'Other
-                        Supported Item' নির্বাচন করুন এবং স্ক্রিনের নির্দেশনা
-                        অনুসরণ করুন।
+                        <strong className='text-gray-700'>iOS-এর জন্য:</strong>{' '}
+                        <strong>Find My</strong> অ্যাপে যান, 'Items' ট্যাবে (+)
+                        আইকনে ট্যাপ করে 'Other Supported Item' নির্বাচন করুন এবং
+                        স্ক্রিনের নির্দেশনা অনুসরণ করুন।
                       </li>
                     </ul>
                   </li>
-                  <li>
-                    <span className='font-semibold'>ব্যবহার শুরু:</span>{' '}
+                  <li className='pb-3 border-b border-gray-100'>
+                    <span className='font-semibold text-gray-800'>
+                      ব্যবহার শুরু:
+                    </span>{' '}
                     ট্র্যাকারটিকে আপনার চাবি, ব্যাগ বা ওয়ালেটে সংযুক্ত করুন।
                     এখন আপনি অ্যাপের মাধ্যমে এটির রিয়েল-টাইম লোকেশন দেখতে
                     পারবেন এবং কাছাকাছি থাকলে শব্দ বাজাতে পারবেন।
                   </li>
                   <li>
-                    <span className='font-semibold'>নোটিফিকেশন সেটআপ:</span>{' '}
+                    <span className='font-semibold text-gray-800'>
+                      নোটিফিকেশন সেটআপ:
+                    </span>{' '}
                     অ্যাপের সেটিংসে 'Notify When Left Behind' বা 'হারিয়ে গেলে
                     জানান' অপশনটি চালু করুন, যাতে আপনি জিনিসটি ভুলে গেলে
                     অ্যালার্ট পেতে পারেন।
@@ -569,19 +689,19 @@ const ProductDetails = ({ initialProduct }) => {
                 </ol>
               </div>
               <div className='flex flex-col gap-4'>
-                <div className='w-full aspect-video rounded-xl overflow-hidden'>
+                <div className='w-full aspect-video rounded-xl overflow-hidden shadow-md'>
                   <iframe
                     className='w-full h-full'
-                    src='https://www.youtube.com/embed/DXhqtG9eHuc'
+                    src='https://www.youtube.com/embed/H6m1ESYHupc?si=V5t-RODIeZCHI9m0'
                     title='YouTube video player'
                     frameBorder='0'
                     allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
                     allowFullScreen
                   ></iframe>
                 </div>
-                <div className='w-full aspect-video rounded-xl overflow-hidden'>
+                <div className='w-full aspect-video rounded-xl overflow-hidden shadow-md'>
                   <iframe
-                    className='w-full h-full' //youtube.com/shorts/OfuMSheZQ8A?feature=share
+                    className='w-full h-full'
                     src='https://www.youtube.com/embed/OfuMSheZQ8A'
                     title='YouTube video player'
                     frameBorder='0'
@@ -589,30 +709,52 @@ const ProductDetails = ({ initialProduct }) => {
                     allowFullScreen
                   ></iframe>
                 </div>
+                <div className='p-3 bg-gray-50 rounded-lg'>
+                  <p className='text-sm text-gray-600'>
+                    <strong>টিপ:</strong> ট্র্যাকারের নাম সেট করুন যাতে সহজে
+                    চেনা যায় (যেমন: "কার চাবি", "অফিস ব্যাগ", ইত্যাদি)।
+                  </p>
+                </div>
               </div>
-              <div></div>
             </div>
           </div>
-          <div className='bg-white p-4 sm:p-5 rounded-lg mt-4 sm:mt-6'>
+
+          {/* FAQ */}
+          <div className='bg-white p-4 sm:p-5 rounded-lg shadow-sm mt-6'>
             <h2 className='text-lg sm:text-xl font-semibold flex items-center gap-2 mb-3'>
               <FaQuestionCircle className='text-red-500' /> প্রায়শই জিজ্ঞাসিত
               প্রশ্নাবলী (FAQ)
             </h2>
             <div className='mt-4 space-y-4'>
               {faqData.map((faq, index) => (
-                <div key={index} className='border-b pb-4 last:border-b-0'>
-                  <p className='text-gray-800 font-semibold mb-1 text-sm sm:text-base'>
-                    <span className='text-blue-600'>প্রশ্ন:</span>{' '}
+                <div
+                  key={index}
+                  className='border border-gray-100 rounded-lg p-4 hover:bg-gray-50 transition duration-200'
+                >
+                  <p className='text-gray-800 font-semibold mb-2 text-sm sm:text-base flex items-start gap-2'>
+                    <span className='text-blue-600 bg-blue-50 px-2 py-1 rounded text-xs'>
+                      Q{index + 1}
+                    </span>
                     {faq.question}
                   </p>
-                  <p className='text-gray-600 font-mont text-sm sm:text-base'>
-                    <span className='font-semibold'>উত্তর:</span> {faq.answer}
+                  <p className='text-gray-600 font-mont text-sm sm:text-base pl-8'>
+                    <span className='font-semibold text-green-600'>উত্তর:</span>{' '}
+                    {faq.answer}
                   </p>
                 </div>
               ))}
             </div>
+            <div className='mt-6 p-4 bg-yellow-50 border border-yellow-100 rounded-lg'>
+              <p className='text-yellow-800 text-sm'>
+                <strong>গুরুত্বপূর্ণ:</strong> ট্র্যাকার হারিয়ে গেলে অবিলম্বে
+                অ্যাপে 'Lost Mode' অ্যাক্টিভেট করুন। এতে ট্র্যাকারটি অন্য কারো
+                ফোনের কাছ দিয়ে গেলে আপনাকে নোটিফিকেশন পাঠাবে।
+              </p>
+            </div>
           </div>
-          <div className='bg-white p-4 sm:p-5 rounded-lg mt-4 sm:mt-6'>
+
+          {/* Customer Reviews */}
+          <div className='bg-white p-4 sm:p-5 rounded-lg shadow-sm mt-6'>
             <h2 className='text-lg sm:text-xl font-semibold flex items-center gap-2 mb-3'>
               <FaRegCommentDots className='text-purple-500' /> গ্রাহক রিভিউ
             </h2>
@@ -620,7 +762,7 @@ const ProductDetails = ({ initialProduct }) => {
               {reviewsData.map((review, index) => (
                 <div
                   key={index}
-                  className='p-4 border border-gray-100 rounded-lg bg-gray-50'
+                  className='p-4 border border-gray-100 rounded-lg bg-gray-50 hover:bg-white transition duration-200'
                 >
                   <div className='flex items-center justify-between mb-2'>
                     <p className='text-sm sm:text-base font-semibold text-gray-800'>
@@ -635,13 +777,26 @@ const ProductDetails = ({ initialProduct }) => {
                     </div>
                   </div>
                   <p className='text-gray-600 text-sm sm:text-base italic'>
-                    "{review.text}"
+                    &ldquo;{review.text}&rdquo;
                   </p>
                 </div>
               ))}
-              <button className='mt-3 text-blue-600 font-medium text-sm sm:text-base hover:underline'>
-                সকল রিভিউ দেখুন
-              </button>
+              <div className='mt-4 pt-4 border-t border-gray-200'>
+                <div className='flex items-center justify-between'>
+                  <div>
+                    <p className='font-semibold text-gray-800'>সর্বমোট রেটিং</p>
+                    <div className='flex items-center gap-2 mt-1'>
+                      <div className='text-yellow-500'>★★★★★</div>
+                      <span className='text-gray-600 text-sm'>
+                        4.8/5.0 (12 রিভিউ)
+                      </span>
+                    </div>
+                  </div>
+                  <button className='px-4 py-2 bg-blue-50 text-blue-600 font-medium text-sm sm:text-base rounded-lg hover:bg-blue-100 transition duration-200'>
+                    সকল রিভিউ দেখুন
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
