@@ -23,7 +23,7 @@ const StarIcon = ({ filled }) => (
   </svg>
 );
 
-const DESC_IMGS = ['size.webp', 'color.jpeg', 'desc3.jpeg', 'desc4.jpeg'];
+const DESC_IMGS = ['desc1.jpeg', 'desc-2.jpeg', 'all.jpeg', 'box.jpeg'];
 
 function CountdownToMidnight() {
   const [timeLeft, setTimeLeft] = useState({ h: 0, m: 0, s: 0 });
@@ -260,8 +260,8 @@ const ProductDetails = ({ initialProduct }) => {
           transform: scale(1.03);
         }
         .thumb-sel {
-          border: 2.5px solid #6366f1;
-          box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+          border: 2.5px solid #1a1a1a;
+          box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.2);
         }
         .thumb-unsel {
           border: 2px solid transparent;
@@ -269,16 +269,16 @@ const ProductDetails = ({ initialProduct }) => {
         }
         .thumb-unsel:hover {
           opacity: 1;
-          border-color: #c7d2fe;
+          border-color: #555;
         }
         .btn-buy {
-          background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+          background: linear-gradient(135deg, #0f0f0f 0%, #1c1c1c 50%, #2d2d2d 100%);
           transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.45);
         }
         .btn-buy:hover {
           transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+          box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6);
         }
         .feature-card {
           transition:
@@ -329,11 +329,11 @@ const ProductDetails = ({ initialProduct }) => {
         className='offer-banner sticky top-0 z-40 py-2.5 px-4 text-center'
         style={{
           background:
-            'linear-gradient(90deg, #7c3aed 0%, #4f46e5 50%, #7c3aed 100%)',
-          borderBottom: '2px solid #6d28d9',
+            'linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 40%, #111111 70%, #0a0a0a 100%)',
+          borderBottom: '2px solid #2a2a2a',
         }}
       >
-        <p className='text-white font-bold bangla text-sm md:text-base tracking-wide drop-shadow'>
+        <p className='font-bold bangla text-sm md:text-base tracking-wide' style={{ color: '#d4a017' }}>
           🎉 {discount}% ডিস্কাউন্ট পাচ্ছেন শুধু আজকের জন্য 🎉
         </p>
       </div>
@@ -450,7 +450,7 @@ const ProductDetails = ({ initialProduct }) => {
                 <div className='mb-6'>
                   <p className='text-sm font-semibold text-gray-700 mb-3 bangla'>
                     রঙ বেছে নিন:{' '}
-                    <span className='text-indigo-600 font-bold bangla'>
+                    <span className='font-bold bangla' style={{ color: '#b8860b' }}>
                       {selectedColor}
                     </span>
                   </p>
@@ -478,7 +478,7 @@ const ProductDetails = ({ initialProduct }) => {
                               lc === 'silver' || lc === 'white'
                                 ? '2px solid #9ca3af'
                                 : '2px solid transparent',
-                            outline: isSelected ? '3px solid #6366f1' : 'none',
+                            outline: isSelected ? '3px solid #1a1a1a' : 'none',
                             outlineOffset: 3,
                             transform: isSelected ? 'scale(1.15)' : 'scale(1)',
                             transition: 'all 0.2s ease',
@@ -491,7 +491,7 @@ const ProductDetails = ({ initialProduct }) => {
                 </div>
 
                 {/* qty + buy */}
-                <div className='flex items-center gap-3 mb-6'>
+                <div className='flex items-center gap-3 mb-4'>
                   <div className='flex items-center border-2 border-gray-200 rounded-xl overflow-hidden'>
                     <button
                       onClick={() => handleQuantityChange('decrement')}
@@ -516,6 +516,25 @@ const ProductDetails = ({ initialProduct }) => {
                   >
                     {product.inStock ? 'এখনই কিনুন' : 'স্টক শেষ'}
                   </button>
+                </div>
+
+                {/* Premium box notice */}
+                <div
+                  className='flex items-center gap-3 mb-5 rounded-xl px-4 py-3'
+                  style={{
+                    background: 'linear-gradient(135deg, #0f0f0f 0%, #1c1c1c 100%)',
+                    border: '1px solid #2e2e2e',
+                  }}
+                >
+                  <img
+                    src='/assets/product/glass/box.jpeg'
+                    alt='Premium Box'
+                    className='w-12 h-12 object-cover rounded-lg flex-shrink-0'
+                    style={{ border: '1px solid #333' }}
+                  />
+                  <p className='bangla text-sm font-semibold' style={{ color: '#d4a017' }}>
+                    🎁 সানগ্লাসটির সাথে পাচ্ছেন প্রিমিয়াম বক্স
+                  </p>
                 </div>
 
                 {/* perks */}
@@ -750,8 +769,8 @@ const ProductDetails = ({ initialProduct }) => {
         className='fixed-offer-bar py-3 px-4'
         style={{
           background:
-            'linear-gradient(90deg, #ea580c 0%, #c2410c 50%, #ea580c 100%)',
-          borderTop: '2px solid #9a3412',
+            'linear-gradient(90deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%)',
+          borderTop: '2px solid #2a2a2a',
         }}
       >
         <div className='flex items-center justify-between max-w-4xl mx-auto gap-3'>
@@ -761,7 +780,11 @@ const ProductDetails = ({ initialProduct }) => {
           <button
             onClick={handleBuyNow}
             disabled={!product.inStock}
-            className='flex-shrink-0 bg-white text-orange-600 font-extrabold bangla px-5 py-2 rounded-lg text-sm hover:bg-orange-50 transition-all duration-200 shadow-md disabled:opacity-70'
+            className='flex-shrink-0 font-extrabold bangla px-5 py-2 rounded-lg text-sm transition-all duration-200 shadow-md disabled:opacity-70'
+            style={{
+              background: 'linear-gradient(135deg, #d4a017 0%, #b8860b 100%)',
+              color: '#0f0f0f',
+            }}
           >
             {product.inStock ? 'এখনই কিনুন →' : 'স্টক শেষ'}
           </button>

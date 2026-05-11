@@ -1,4 +1,4 @@
-export const products = [
+﻿export const products = [
   {
     id: 13,
     title:
@@ -254,15 +254,14 @@ export const products = [
     originalPrice: 1850.0,
     sectionType: 'hot',
     inStock: true,
-    thumbnail: '/assets/product/glass/black.jpeg',
+    thumbnail: '/assets/product/glass/black-main.jpeg',
     description:
       '১-৯ বিভিন্ন লেভেলে আপনার সুবিধা অনুযায়ী এডজাস্ট করুন। স্টাইলিশ সানগ্লাসটি আপনাকে দিবে চোখের প্রশান্তি।',
     images: [
-      '/assets/product/glass/black.jpeg',
-      '/assets/product/glass/golden.jpeg',
-      '/assets/product/glass/silver.jpeg',
-      // '/assets/product/glass/black.jpeg',
-      '/assets/product/glass/desc3.jpeg',
+      '/assets/product/glass/black-main.jpeg',
+      '/assets/product/glass/silver-main.jpeg',
+      '/assets/product/glass/golden-main.jpeg',
+      '/assets/product/glass/all.jpeg',
     ],
     variants: [{ color: 'Black' }, { color: 'Silver' }, { color: 'Golden' }],
   },
@@ -377,3 +376,4 @@ export const products = [
 ];
 
 export default products;
+
