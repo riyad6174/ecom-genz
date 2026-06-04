@@ -299,10 +299,10 @@
       'JF132 Portable High-speed Cooling Fan with 0-200 Speed Settings, USB Rechargeable, and Adjustable Tilt for Personal Use',
     images: [
       '/assets/product/fan/black.jpg',
-      '/assets/product/fan/blue.jpg',
+      // '/assets/product/fan/blue.jpg',
       '/assets/product/fan/pink.jpg',
       '/assets/product/fan/white.jpg',
-      '/assets/product/fan/blue.jpg',
+      // '/assets/product/fan/blue.jpg',
     ],
     variants: [
       { color: 'Black' },
