@@ -309,7 +309,7 @@
       { color: 'White' },
       // { color: 'Gray' },
       { color: 'Mistyrose' },
-      { color: 'Cornflowerblue' },
+      //{ color: 'Cornflowerblue' },
       // { color: 'Beige' },
     ],
   },
