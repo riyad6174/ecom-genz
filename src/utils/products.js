@@ -75,7 +75,7 @@
     title: 'Energy Booster Essential Oil Nasal Inhaler | Genz Shop',
     slug: 'energy-booster-essential-oil-nasal-inhaler',
     model: 'Standard',
-    price: 490.0,
+    price: 390.0,
     originalPrice: 650.0,
     sectionType: 'hot',
     inStock: true,
@@ -376,4 +376,3 @@
 ];
 
 export default products;
-

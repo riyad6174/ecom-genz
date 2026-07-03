@@ -35,12 +35,12 @@ const variantBgColors = {
 };
 
 // Bundle pricing tiers based on total quantity
-const BUNDLE_PRICES = { 1: 490, 2: 800, 3: 999, 4: 1200, 5: 1400, 6: 1600 };
+const BUNDLE_PRICES = { 1: 390, 2: 690, 3: 790, 4: 1090, 5: 1290, 6: 1490 };
 
 const getBundlePrice = (qty) => {
   if (qty <= 0) return 0;
   if (qty <= 6) return BUNDLE_PRICES[qty];
-  return 1600 + (qty - 6) * 490;
+  return 1490 + (qty - 6) * 490;
 };
 
 const ProductDetails = ({ initialProduct }) => {
@@ -106,7 +106,7 @@ const ProductDetails = ({ initialProduct }) => {
   );
 
   const bundlePrice = getBundlePrice(totalQuantity);
-  const originalTotal = totalQuantity * (product?.price || 490);
+  const originalTotal = totalQuantity * (product?.price || 390);
   const savings = originalTotal - bundlePrice;
   const savingsPercent =
     originalTotal > 0 ? Math.round((savings / originalTotal) * 100) : 0;
@@ -436,6 +436,15 @@ const ProductDetails = ({ initialProduct }) => {
 
       <CustomSection>
         <div className='px-3 sm:px-4'>
+          {/* Certification image */}
+          <div className='mb-4'>
+            <img
+              src='/assets/product/inhaler/cert.jpg'
+              alt='Certificate of Compliance - ECM Certification'
+              className='w-full h-auto rounded-lg shadow-md'
+            />
+          </div>
+
           {/* Product images grid */}
           <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'>
             <img
@@ -483,42 +492,42 @@ const ProductDetails = ({ initialProduct }) => {
                 {
                   qty: 1,
                   label: '1টি পণ্য',
-                  price: 490,
-                  original: 490,
+                  price: 390,
+                  original: 650,
                   badge: null,
                 },
                 {
                   qty: 2,
                   label: '2টি পণ্য',
-                  price: 800,
+                  price: 690,
                   original: 980,
                   badge: '18% ছাড়',
                 },
                 {
                   qty: 3,
                   label: '3টি পণ্য',
-                  price: 999,
+                  price: 790,
                   original: 1470,
                   badge: '32% ছাড়',
                 },
                 {
                   qty: 4,
                   label: '4টি পণ্য',
-                  price: 1200,
+                  price: 1090,
                   original: 1960,
                   badge: '39% ছাড়',
                 },
                 {
                   qty: 5,
                   label: '5টি পণ্য',
-                  price: 1400,
+                  price: 1290,
                   original: 2450,
                   badge: '43% ছাড়',
                 },
                 {
                   qty: 6,
                   label: '6টি পণ্য (সব ফ্লেভার)',
-                  price: 1600,
+                  price: 1490,
                   original: 2940,
                   badge: '46% ছাড়',
                   highlight: true,
