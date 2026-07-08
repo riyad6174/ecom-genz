@@ -436,41 +436,8 @@ const ProductDetails = ({ initialProduct }) => {
 
       <CustomSection>
         <div className='px-3 sm:px-4'>
-          {/* Certification image */}
-          <div className='mb-4'>
-            <img
-              src='/assets/product/inhaler/cert.jpg'
-              alt='Certificate of Compliance - ECM Certification'
-              className='w-full h-auto rounded-lg shadow-md'
-            />
-          </div>
-
-          {/* Product images grid */}
-          <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'>
-            <img
-              src='/assets/product/inhaler/bull.avif'
-              alt='Energy Booster Nasal Inhaler - Dual Stick Design'
-              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
-            />
-            <img
-              src='/assets/product/inhaler/grape.avif'
-              alt='Portable Essential Oil Inhaler with Cap'
-              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
-            />
-            <img
-              src='/assets/product/inhaler/rf-7.png'
-              alt='Aromatherapy Nasal Inhaler - Peppermint Style'
-              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
-            />
-            <img
-              src='/assets/product/inhaler/rf-9.png'
-              alt='Refreshing Nasal Inhaler Pack - Natural Oils'
-              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
-            />
-          </div>
-
           {/* ── Bundle Offer Banner ── */}
-          <div className='mt-6 rounded-2xl overflow-hidden shadow-lg border border-green-100'>
+          <div className='mt-4 mb-3 rounded-lg overflow-hidden shadow-lg border border-green-100'>
             {/* Header */}
             <div
               className='px-6 py-4 text-center'
@@ -580,6 +547,38 @@ const ProductDetails = ({ initialProduct }) => {
                 প্রযোজ্য
               </p>
             </div>
+          </div>
+          {/* Certification image */}
+          <div className='mb-4'>
+            <img
+              src='/assets/product/inhaler/cert.jpg'
+              alt='Certificate of Compliance - ECM Certification'
+              className='w-full h-auto rounded-lg shadow-md'
+            />
+          </div>
+
+          {/* Product images grid */}
+          <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4'>
+            <img
+              src='/assets/product/inhaler/bull.avif'
+              alt='Energy Booster Nasal Inhaler - Dual Stick Design'
+              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
+            />
+            <img
+              src='/assets/product/inhaler/grape.avif'
+              alt='Portable Essential Oil Inhaler with Cap'
+              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
+            />
+            <img
+              src='/assets/product/inhaler/rf-7.png'
+              alt='Aromatherapy Nasal Inhaler - Peppermint Style'
+              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
+            />
+            <img
+              src='/assets/product/inhaler/rf-9.png'
+              alt='Refreshing Nasal Inhaler Pack - Natural Oils'
+              className='w-full h-48 sm:h-64 object-cover rounded-lg shadow-md hover:shadow-lg transition-shadow'
+            />
           </div>
 
           {/* Product Description */}
