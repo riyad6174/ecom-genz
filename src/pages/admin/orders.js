@@ -264,6 +264,7 @@ export default function AdminOrders() {
               <span className='font-black text-slate-100 tracking-tight hidden sm:block text-sm'>GenZ Admin</span>
             </div>
             <nav className='flex items-center gap-1 bg-slate-900/60 p-1 rounded-lg border border-slate-700'>
+              <Link href='/admin/products' className='text-[11px] px-4 py-1.5 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-700 transition-colors font-black uppercase tracking-wider'>Products</Link>
               <Link href='/admin/orders' className='text-[11px] px-4 py-1.5 rounded-md bg-blue-600 text-white font-black uppercase tracking-wider'>Orders</Link>
               <Link href='/admin/admins' className='text-[11px] px-4 py-1.5 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-700 transition-colors font-black uppercase tracking-wider'>Team</Link>
             </nav>

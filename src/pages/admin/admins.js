@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
 import {
-  FiUsers, FiUserPlus, FiTrash2, FiLogOut, FiShoppingBag,
+  FiUsers, FiUserPlus, FiTrash2, FiLogOut, FiShoppingBag, FiPackage,
   FiCheckCircle, FiAlertCircle, FiShield, FiMail, FiLock,
   FiClock, FiChevronRight,
 } from 'react-icons/fi';
@@ -109,6 +109,9 @@ export default function AdminsManagement() {
             <span className='font-black text-slate-100 tracking-tight hidden sm:block text-sm'>GenZ Admin</span>
           </div>
           <nav className='flex items-center gap-1 bg-slate-900/60 p-1 rounded-lg border border-slate-700'>
+            <Link href='/admin/products' className='flex items-center gap-2 text-[11px] font-black uppercase tracking-widest px-4 py-1.5 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-700 transition-all'>
+              <FiPackage className='w-3.5 h-3.5' />Products
+            </Link>
             <Link href='/admin/orders' className='flex items-center gap-2 text-[11px] font-black uppercase tracking-widest px-4 py-1.5 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-700 transition-all'>
               <FiShoppingBag className='w-3.5 h-3.5' />Orders
             </Link>

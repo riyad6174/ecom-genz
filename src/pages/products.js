@@ -7,17 +7,15 @@ import { MdFormatListBulleted } from 'react-icons/md';
 import { GoChevronDown } from 'react-icons/go';
 import Link from 'next/link';
 import { addToCart } from '@/store/cartSlice';
-import { products } from '@/utils/products';
+import { products as staticProducts } from '@/utils/products';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-
-// Define categories based on product titles/models
-const categories = ['Smart Watches', 'Smart Rings'];
 
 function Products() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const [filteredProducts, setFilteredProducts] = useState(products);
+  const [allProducts, setAllProducts] = useState(staticProducts);
+  const [filteredProducts, setFilteredProducts] = useState(staticProducts);
   const [sortOption, setSortOption] = useState('newest');
   const [viewMode, setViewMode] = useState('grid');
   const [filters, setFilters] = useState({
@@ -27,39 +25,43 @@ function Products() {
   });
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // Price ranges based on product prices (1500–3850)
+  useEffect(() => {
+    fetch('/api/public/products')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.products && data.products.length > 0) {
+          setAllProducts(data.products);
+          setFilteredProducts(data.products);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const priceRanges = [
     { label: 'All Prices', value: [0, Infinity] },
-    { label: '৳0 - ৳2000', value: [0, 2000] },
-    { label: '৳2000 - ৳4000', value: [2000, 4000] },
-    { label: '৳4000+', value: [4000, Infinity] },
+    { label: 'BDT0 - BDT2000', value: [0, 2000] },
+    { label: 'BDT2000 - BDT4000', value: [2000, 4000] },
+    { label: 'BDT4000+', value: [4000, Infinity] },
   ];
 
-  // Stock status options
   const stockStatuses = ['In Stock', 'Out of Stock'];
 
-  // Apply filters and sorting
   useEffect(() => {
-    let result = [...products];
+    let result = [...allProducts];
 
-    // Apply category filter
     if (filters.categories.length > 0) {
       result = result.filter((product) => {
-        const category = product.title.includes('Smart Watch')
-          ? 'Smart Watches'
-          : 'Smart Rings';
+        const category = product.category || (product.title.includes('Smart Watch') ? 'Smart Watches' : 'Smart Rings');
         return filters.categories.includes(category);
       });
     }
 
-    // Apply price range filter
     result = result.filter(
       (product) =>
         product.price >= filters.priceRange[0] &&
         product.price <= filters.priceRange[1]
     );
 
-    // Apply stock status filter
     if (filters.stockStatus.length > 0) {
       result = result.filter((product) => {
         const stock = product.inStock ? 'In Stock' : 'Out of Stock';
@@ -67,13 +69,12 @@ function Products() {
       });
     }
 
-    // Apply sorting
     switch (sortOption) {
       case 'newest':
-        result.sort((a, b) => b.id - a.id); // Higher ID = newer
+        result.sort((a, b) => (b.id || 0) - (a.id || 0));
         break;
       case 'oldest':
-        result.sort((a, b) => a.id - b.id); // Lower ID = older
+        result.sort((a, b) => (a.id || 0) - (b.id || 0));
         break;
       case 'highPrice':
         result.sort((a, b) => b.price - a.price);
@@ -86,14 +87,12 @@ function Products() {
     }
 
     setFilteredProducts(result);
-  }, [filters, sortOption]);
+  }, [filters, sortOption, allProducts]);
 
-  // Handle sort option change
   const handleSortChange = (option) => {
     setSortOption(option);
   };
 
-  // Handle category filter change
   const handleCategoryChange = (category) => {
     const updatedCategories = filters.categories.includes(category)
       ? filters.categories.filter((c) => c !== category)
@@ -101,12 +100,10 @@ function Products() {
     setFilters({ ...filters, categories: updatedCategories });
   };
 
-  // Handle price range filter change
   const handlePriceRangeChange = (range) => {
     setFilters({ ...filters, priceRange: range });
   };
 
-  // Handle stock status filter change
   const handleStockStatusChange = (status) => {
     const updatedStockStatus = filters.stockStatus.includes(status)
       ? filters.stockStatus.filter((s) => s !== status)
@@ -114,32 +111,16 @@ function Products() {
     setFilters({ ...filters, stockStatus: updatedStockStatus });
   };
 
-  // Handle view mode toggle
   const handleViewModeChange = (mode) => {
     setViewMode(mode);
   };
 
-  // Toggle filter visibility on mobile
   const toggleFilter = () => {
     setIsFilterOpen(!isFilterOpen);
   };
 
-  // Inline ProductCard component
   const ProductCard = ({ product, viewMode }) => {
-    const handleAddToCart = () => {
-      dispatch(
-        addToCart({
-          id: product.id,
-          title: product.title,
-          slug: product.slug,
-          price: product.price,
-          selectedColor: product.variants[0].color, // Default to first variant
-          quantity: 1,
-          image: product.thumbnail,
-        })
-      );
-      router.push('/order');
-    };
+    const category = product.category || (product.title.includes('Smart Watch') ? 'Smart Watches' : 'Smart Rings');
 
     return (
       <>
@@ -190,17 +171,15 @@ function Products() {
             )}
 
             <p className='text-xs text-gray-500 mt-1'>
-              {product.title.includes('Smart Watch')
-                ? 'Smart Watches'
-                : 'Smart Rings'}
+              {category}
             </p>
             <div className='flex items-center gap-2 mt-2'>
               <p className='text-sm font-bold text-accent'>
-                ৳{product.price.toFixed(2)}
+                BDT{product.price.toFixed(2)}
               </p>
               {product.originalPrice > product.price && (
                 <p className='text-xs text-gray-500 line-through'>
-                  ৳{product.originalPrice.toFixed(2)}
+                  BDT{product.originalPrice.toFixed(2)}
                 </p>
               )}
             </div>
@@ -214,7 +193,6 @@ function Products() {
             <div className='mt-auto flex items-center justify-center'>
               <Link
                 href={`/product/${product.slug}`}
-                // onClick={handleAddToCart}
                 disabled={!product.inStock}
                 className={`mt-3 bg-accent text-center text-white py-2 px-4 rounded-lg text-sm font-semibold w-full ${
                   product.inStock
@@ -234,67 +212,27 @@ function Products() {
   return (
     <div>
       <Head>
-        <title>All Products | GenZ Shop - Smart Watches, Rings & Gadgets</title>
-        <meta
-          name='description'
-          content='Browse our full collection of smart watches, smart rings, and innovative gadgets. Affordable, stylish, and available now at GenZ Shop.'
-        />
-        <meta
-          name='keywords'
-          content='smart watches, smart rings, wearable gadgets, GenZ Shop, fashion tech, affordable electronics'
-        />
+        <title>All Products | GenZ Shop</title>
+        <meta name='description' content='Browse our full collection of products at GenZ Shop.' />
+        <meta name='keywords' content='smart watches, smart rings, wearable gadgets, GenZ Shop, fashion tech, affordable electronics' />
         <meta name='robots' content='index, follow' />
         <meta name='author' content='GenZ Shop' />
-
-        {/* Canonical */}
         <link rel='canonical' href='https://www.genzshop.store/products' />
-
-        {/* Open Graph */}
         <meta property='og:title' content='All Products | GenZ Shop' />
-        <meta
-          property='og:description'
-          content='Explore our range of stylish smart watches, rings, and must-have gadgets. Shop online at GenZ Shop today.'
-        />
-        <meta
-          property='og:image'
-          content='https://www.genzshop.store/assets/footer-logo.png'
-        />
+        <meta property='og:description' content='Explore our range of products at GenZ Shop.' />
+        <meta property='og:image' content='https://www.genzshop.store/assets/footer-logo.png' />
         <meta property='og:url' content='https://www.genzshop.store/products' />
         <meta property='og:type' content='website' />
         <meta property='og:site_name' content='GenZ Shop' />
-
-        {/* Twitter Card */}
         <meta name='twitter:card' content='summary_large_image' />
         <meta name='twitter:title' content='All Products | GenZ Shop' />
-        <meta
-          name='twitter:description'
-          content='Shop the latest fashion tech — smart watches, rings, and more at GenZ Shop.'
-        />
-        <meta
-          name='twitter:image'
-          content='https://www.genzshop.store/assets/footer-logo.png'
-        />
-
-        {/* Schema.org Structured Data for Product Collection Page */}
-        <script
-          type='application/ld+json'
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'CollectionPage',
-              name: 'All Products - GenZ Shop',
-              description:
-                'Explore our full catalog of smart wearables and gadgets. Affordable, stylish tech made for modern living.',
-              url: 'https://www.genzshop.store/products',
-            }),
-          }}
-        />
+        <meta name='twitter:description' content='Shop the latest fashion tech at GenZ Shop.' />
+        <meta name='twitter:image' content='https://www.genzshop.store/assets/footer-logo.png' />
       </Head>
 
       <Navbar />
       <div className='container mx-auto py-3 md:py-20 px-4 '>
         <div className='flex flex-col md:flex-row gap-6'>
-          {/* Filters (Collapsible on Mobile) */}
           <div className='md:w-1/4'>
             <button
               onClick={toggleFilter}
@@ -308,17 +246,11 @@ function Products() {
               }`}
             >
               <h3 className='text-lg font-semibold mb-4'>Filters</h3>
-              {/* Categories */}
               <div className='mb-6'>
-                <h4 className='text-sm font-medium text-gray-700 mb-2'>
-                  Categories
-                </h4>
+                <h4 className='text-sm font-medium text-gray-700 mb-2'>Categories</h4>
                 <div className='space-y-2'>
-                  {categories.map((category) => (
-                    <label
-                      key={category}
-                      className='flex items-center gap-2 text-sm'
-                    >
+                  {['Smart Watches', 'Smart Rings'].map((category) => (
+                    <label key={category} className='flex items-center gap-2 text-sm'>
                       <input
                         type='checkbox'
                         checked={filters.categories.includes(category)}
@@ -330,17 +262,11 @@ function Products() {
                   ))}
                 </div>
               </div>
-              {/* Price Range */}
               <div className='mb-6'>
-                <h4 className='text-sm font-medium text-gray-700 mb-2'>
-                  Price Range
-                </h4>
+                <h4 className='text-sm font-medium text-gray-700 mb-2'>Price Range</h4>
                 <div className='space-y-2'>
                   {priceRanges.map((range) => (
-                    <label
-                      key={range.label}
-                      className='flex items-center gap-2 text-sm'
-                    >
+                    <label key={range.label} className='flex items-center gap-2 text-sm'>
                       <input
                         type='radio'
                         name='priceRange'
@@ -356,17 +282,11 @@ function Products() {
                   ))}
                 </div>
               </div>
-              {/* Stock Status */}
               <div>
-                <h4 className='text-sm font-medium text-gray-700 mb-2'>
-                  Stock Status
-                </h4>
+                <h4 className='text-sm font-medium text-gray-700 mb-2'>Stock Status</h4>
                 <div className='space-y-2'>
                   {stockStatuses.map((status) => (
-                    <label
-                      key={status}
-                      className='flex items-center gap-2 text-sm'
-                    >
+                    <label key={status} className='flex items-center gap-2 text-sm'>
                       <input
                         type='checkbox'
                         checked={filters.stockStatus.includes(status)}
@@ -380,9 +300,7 @@ function Products() {
               </div>
             </div>
           </div>
-          {/* Products */}
           <div className='md:w-3/4'>
-            {/* Sort and View Controls */}
             <div className='flex flex-row   items-start sm:items-center justify-between mb-6 gap-4'>
               <div className='flex items-center gap-4'>
                 <span className='text-sm font-medium'>Sort by</span>
@@ -423,7 +341,6 @@ function Products() {
                 </button>
               </div>
             </div>
-            {/* Product List */}
             <div
               className={`${
                 viewMode === 'grid'
@@ -438,7 +355,7 @@ function Products() {
               ) : (
                 filteredProducts.map((product) => (
                   <ProductCard
-                    key={product.id}
+                    key={product.id || product._id}
                     product={product}
                     viewMode={viewMode}
                   />

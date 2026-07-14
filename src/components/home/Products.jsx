@@ -1,11 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import CustomSection from '../layout/CustomSection';
 import { FaArrowRight } from 'react-icons/fa6';
 import ProductCard from '../product/ProductCard';
-import products from '@/utils/products';
+import { products as staticProducts } from '@/utils/products';
 import Link from 'next/link';
 
 function Products() {
+  const [allProducts, setAllProducts] = useState(staticProducts);
+
+  useEffect(() => {
+    fetch('/api/public/products')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.products && data.products.length > 0) {
+          setAllProducts(data.products);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <CustomSection>
       <div className='md:bg-[#FAFAFA] px-6 md:px-10 md:py-6 rounded-2xl pb-32 md:pb-0'>
@@ -27,8 +40,8 @@ function Products() {
         </div>
 
         <div className='grid grid-cols-2 md:grid-cols-5 gap-3'>
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {allProducts.map((product) => (
+            <ProductCard key={product.id || product._id} product={product} />
           ))}
         </div>
       </div>

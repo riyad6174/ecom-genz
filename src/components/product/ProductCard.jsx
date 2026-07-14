@@ -8,21 +8,18 @@ const ProductCard = ({ product }) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  console.log(product);
-
   const handleBuyNow = () => {
     if (product && product.inStock) {
-      // Use the first variant's color and image as defaults
-      // const defaultVariant = product.images[0];
+      const variantColor = product.variants?.[0]?.color || product.variants?.[0]?.value || '';
       dispatch(
         addToCart({
-          id: product.id,
+          id: product.id || product._id,
           title: product.title,
           slug: product.slug,
           price: product.price,
-          selectedColor: product.variants[0].color,
-          quantity: 1, // Default quantity
-          image: product?.thumbnail, // Use the first image
+          selectedColor: variantColor,
+          quantity: 1,
+          image: product?.thumbnail,
         })
       );
       router.push('/order');
@@ -31,7 +28,6 @@ const ProductCard = ({ product }) => {
 
   return (
     <div className='bg-white border border-primary  p-2 md:p-3   flex flex-col h-[300px] md:h-[360px]'>
-      {/* Product Image Section */}
       {product.inStock ? (
         <div className='relative flex-shrink-0'>
           <Link href={`/product/${product?.slug}`}>
@@ -41,11 +37,6 @@ const ProductCard = ({ product }) => {
               className='w-full h-36 md:h-44 object-cover md:mt-4'
             />
           </Link>
-          {/* {product?.sectionType === 'hot' && (
-            <span className='absolute top-2 left-2 bg-accent text-white text-xs font-semibold px-2 py-1 rounded'>
-              New
-            </span>
-          )} */}
         </div>
       ) : (
         <div className='relative flex-shrink-0'>
@@ -62,7 +53,6 @@ const ProductCard = ({ product }) => {
         </div>
       )}
 
-      {/* Product Details */}
       {product?.inStock ? (
         <Link
           href={`/product/${product?.slug}`}
@@ -76,22 +66,19 @@ const ProductCard = ({ product }) => {
         </span>
       )}
 
-      {/* Pricing */}
       <div className='mt-2 px-2 flex items-center space-x-2'>
         <span className='text-black text-md font-bold'>
-          ৳{product?.price?.toFixed(2)}
+          BDT{product?.price?.toFixed(2)}
         </span>
         <span className='text-gray-500 line-through text-xs'>
-          ৳{product?.originalPrice?.toFixed(2)}
+          BDT{product?.originalPrice?.toFixed(2)}
         </span>
       </div>
 
-      {/* Buy Now Button */}
       {product?.inStock ? (
         <div className='mt-auto flex items-center justify-center p-2'>
           <Link
             href={`/product/${product?.slug}`}
-            // onClick={handleBuyNow}
             className='text-xs bg-primary text-center w-full py-2  font-semibold text-black hover:bg-secondary hover:text-black transition duration-300'
           >
             Order Now
