@@ -4,12 +4,12 @@ import { useCartDialog } from '@/context/CartDialogContext';
 
 const FloatingCartMenu = () => {
   const cartItems = useSelector((state) => state.cart.items);
-  const { openDialog } = useCartDialog();
+  const { openDialog, isOpen } = useCartDialog();
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  if (totalItems === 0) return null;
+  return null;
 
   return (
     <div className='fixed bottom-4 left-0 right-0 z-50 md:hidden'>
