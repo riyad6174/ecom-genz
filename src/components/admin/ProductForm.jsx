@@ -234,7 +234,7 @@ const EMPTY = {
   title: '', slug: '', shortDescription: '', descriptionHTML: '',
   category: '', thumbnail: '', images: [],
   price: '', originalPrice: '',
-  inStock: true, sectionType: 'hot', discountTimer: false,
+  inStock: true, sectionType: 'hot', discountTimer: false, hasGuarantee: false,
   variants: [], faqs: [], specifications: [], reviews: [], gallery: [],
 };
 
@@ -265,6 +265,7 @@ export default function ProductForm({ title, initialData, onSubmit, saving, erro
       inStock: initialData.inStock !== false,
       sectionType: initialData.sectionType || 'hot',
       discountTimer: !!initialData.discountTimer,
+      hasGuarantee: !!initialData.hasGuarantee,
       variants: initialData.variants || [],
       faqs: initialData.faqs || [],
       specifications: initialData.specifications || [],
@@ -349,6 +350,7 @@ export default function ProductForm({ title, initialData, onSubmit, saving, erro
             <div className="flex flex-col gap-4">
               <Toggle label="In Stock" checked={form.inStock} onChange={(v) => set('inStock', v)} color="emerald" />
               <Toggle label="Show Countdown Timer" checked={form.discountTimer} onChange={(v) => set('discountTimer', v)} color="amber" hint="Displays a daily countdown to midnight on the product page" />
+              <Toggle label="Has Guarantee" checked={form.hasGuarantee} onChange={(v) => set('hasGuarantee', v)} color="blue" hint="Shows a 6-month replacement guarantee badge on product page" />
             </div>
           </div>
         </Section>

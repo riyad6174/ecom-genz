@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import Navbar from '@/components/common/Navbar';
 import { products } from '@/utils/products';
@@ -7,6 +7,7 @@ import { useCartDialog } from '@/context/CartDialogContext';
 import Footer from '@/components/common/Footer';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { Truck, Banknote, ShieldCheck, Gift } from 'lucide-react';
 
 const productData = products.find(
   (p) => p.slug === 'portable-high-speed-cooling-fan',

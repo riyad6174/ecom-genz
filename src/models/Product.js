@@ -37,6 +37,7 @@ const productSchema = new mongoose.Schema(
     inStock: { type: Boolean, default: true },
     sectionType: { type: String, enum: ['hot', 'normal'], default: 'hot' },
     discountTimer: { type: Boolean, default: false },
+    hasGuarantee: { type: Boolean, default: false },
     variants: { type: [variantSchema], default: [] },
     faqs: { type: [faqSchema], default: [] },
     reviews: { type: [reviewSchema], default: [] },

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import Navbar from '@/components/common/Navbar';
 import Related from '@/components/checkout/Related';
@@ -8,6 +8,7 @@ import { useCartDialog } from '@/context/CartDialogContext';
 import Footer from '@/components/common/Footer';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { Truck, Banknote, ShieldCheck, Gift } from 'lucide-react';
 
 const productData = products.find(
   (p) => p.slug === 'professional-screwdriver-tool-kit',
@@ -397,15 +398,25 @@ const ProductDetails = ({ initialProduct }) => {
                 </div>
 
                 {/* perks */}
-                <div className='grid grid-cols-2 gap-3 pt-5 border-t border-gray-100'>
+                <div className='grid grid-cols-2 gap-2.5 pt-5 border-t border-gray-100'>
                   {[
-                    { icon: '🚀', text: 'দ্রুত ডেলিভারি' },
-                    { icon: '🔒', text: 'ক্যাশ অন ডেলিভারি' },
-                    { icon: '🎁', text: 'বিশেষ অফার' },
+                    { icon: Truck, text: 'দ্রুত ডেলিভারি', color: '#ea580c', bg: '#fff7ed', border: '#fed7aa' },
+                    { icon: Banknote, text: 'ক্যাশ অন ডেলিভারি', color: '#059669', bg: '#ecfdf5', border: '#a7f3d0' },
+                    { icon: ShieldCheck, text: 'অরিজিনাল প্রোডাক্ট', color: '#2563eb', bg: '#eff6ff', border: '#bfdbfe' },
+                    { icon: Gift, text: 'বিশেষ অফার', color: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
                   ].map((p) => (
-                    <div key={p.text} className='flex items-center gap-2'>
-                      <span className='text-lg'>{p.icon}</span>
-                      <span className='text-xs text-gray-500 bangla font-medium'>
+                    <div
+                      key={p.text}
+                      className='flex items-center gap-2.5 px-3 py-2.5 rounded-lg border transition-all duration-200 hover:shadow-sm'
+                      style={{ background: p.bg, borderColor: p.border }}
+                    >
+                      <div
+                        className='w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0'
+                        style={{ background: `${p.color}12` }}
+                      >
+                        <p.icon className='w-3.5 h-3.5' style={{ color: p.color }} strokeWidth={2.2} />
+                      </div>
+                      <span className='text-xs font-semibold text-gray-700 bangla'>
                         {p.text}
                       </span>
                     </div>

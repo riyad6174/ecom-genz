@@ -6,6 +6,7 @@ import { addToCart, clearCart } from '@/store/cartSlice';
 import Footer from '@/components/common/Footer';
 import Head from 'next/head';
 import OrderDialog from '@/components/checkout/OrderDialog';
+import { Truck, Banknote, ShieldCheck, Gift, ShieldAlert } from 'lucide-react';
 
 const StarIcon = ({ filled }) => (
   <svg
@@ -48,7 +49,7 @@ function CountdownToMidnight() {
       }}
     >
       <p className='text-sm font-semibold text-center text-orange-700 mb-2'>
-        Offer ends in
+        অফারটি শেষ হতে সময় বাকি আছে
       </p>
       <div className='flex items-center justify-center gap-2'>
         {[
@@ -375,6 +376,72 @@ export default function DynamicProductPage({ product, notFound }) {
           display: inline-block;
           animation: icon-sparkle 2.4s ease-in-out infinite;
           color: #a4dd00;
+        }
+        /* Guarantee card styles */
+        .guarantee-card-wrapper {
+          animation: guarantee-slide-in 0.4s ease-out;
+        }
+        @keyframes guarantee-slide-in {
+          0% {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .guarantee-shimmer {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 40%;
+          height: 100%;
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.6) 50%,
+            transparent 100%
+          );
+          animation: guarantee-shimmer-move 3s ease-in-out infinite;
+          pointer-events: none;
+          z-index: 1;
+        }
+        @keyframes guarantee-shimmer-move {
+          0% {
+            transform: translateX(-200%);
+          }
+          100% {
+            transform: translateX(350%);
+          }
+        }
+        .guarantee-icon-pulse {
+          animation: guarantee-pulse 2.5s ease-in-out infinite;
+        }
+        @keyframes guarantee-pulse {
+          0%,
+          100% {
+            box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.3);
+          }
+          50% {
+            box-shadow: 0 0 0 8px rgba(217, 119, 6, 0);
+          }
+        }
+        .guarantee-text-shine {
+          background: linear-gradient(90deg, #92400e, #b45309, #92400e);
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: text-shine 3s linear infinite;
+        }
+        @keyframes text-shine {
+          0% {
+            background-position: 0% center;
+          }
+          100% {
+            background-position: 200% center;
+          }
         }
         /* dp-html-content: full Quill/Tiptap output rendering */
         .dp-html-content {
@@ -810,21 +877,92 @@ export default function DynamicProductPage({ product, notFound }) {
                   </button>
                 </div>
 
-                <div className='grid grid-cols-2 gap-3 pt-5 border-t border-gray-100'>
+                <div className='grid grid-cols-2 gap-2.5 pt-5 border-t border-gray-100'>
                   {[
-                    { icon: '🚀', text: 'Fast Delivery' },
-                    { icon: '🔒', text: 'Cash on Delivery' },
-                    { icon: '💯', text: 'Original Product' },
-                    { icon: '🎁', text: 'Special Offer' },
+                    {
+                      icon: Truck,
+                      text: 'Fast Delivery',
+                      color: '#ea580c',
+                      bg: '#fff7ed',
+                      border: '#fed7aa',
+                    },
+                    {
+                      icon: Banknote,
+                      text: 'Cash on Delivery',
+                      color: '#059669',
+                      bg: '#ecfdf5',
+                      border: '#a7f3d0',
+                    },
+                    {
+                      icon: ShieldCheck,
+                      text: 'Original Product',
+                      color: '#2563eb',
+                      bg: '#eff6ff',
+                      border: '#bfdbfe',
+                    },
+                    {
+                      icon: Gift,
+                      text: 'Special Offer',
+                      color: '#dc2626',
+                      bg: '#fef2f2',
+                      border: '#fecaca',
+                    },
                   ].map((p) => (
-                    <div key={p.text} className='flex items-center gap-2'>
-                      <span className='text-lg'>{p.icon}</span>
-                      <span className='text-xs text-gray-500 font-medium'>
+                    <div
+                      key={p.text}
+                      className='flex items-center gap-2.5 px-3 py-2.5 rounded-lg border transition-all duration-200 hover:shadow-sm'
+                      style={{ background: p.bg, borderColor: p.border }}
+                    >
+                      <div
+                        className='w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0'
+                        style={{ background: `${p.color}12` }}
+                      >
+                        <p.icon
+                          className='w-3.5 h-3.5'
+                          style={{ color: p.color }}
+                          strokeWidth={2.2}
+                        />
+                      </div>
+                      <span className='text-xs font-semibold text-gray-700'>
                         {p.text}
                       </span>
                     </div>
                   ))}
                 </div>
+
+                {/* Guarantee Card */}
+                {product.hasGuarantee && (
+                  <div
+                    className='mt-4 guarantee-card-wrapper relative overflow-hidden rounded-xl'
+                    style={{ border: '1.5px solid #d97706' }}
+                  >
+                    <div className='guarantee-shimmer' />
+                    <div
+                      className='relative flex items-center gap-3 px-4 py-3.5'
+                      style={{
+                        background: 'linear-gradient(135deg,#fffbeb,#fef3c7)',
+                      }}
+                    >
+                      <div
+                        className='w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 guarantee-icon-pulse'
+                        style={{ background: '#92400e' }}
+                      >
+                        <ShieldAlert
+                          className='w-5 h-5 text-amber-100'
+                          strokeWidth={2.5}
+                        />
+                      </div>
+                      <div>
+                        <p className='text-sm font-bold text-amber-900 guarantee-text-shine'>
+                          ৬ মাসের রিপ্লেসমেন্ট গ্যারান্টি
+                        </p>
+                        <p className='text-[10px] text-amber-700 font-medium mt-0.5'>
+                          6 Months Replacement Guarantee
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
