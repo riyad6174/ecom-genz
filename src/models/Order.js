@@ -24,6 +24,9 @@ const orderSchema = new mongoose.Schema(
       default: null,
     },
     note: { type: String, default: '' },
+    // Set at creation time when total item quantity exceeds the trusted threshold —
+    // used to hide the order from GTM/Meta conversion tracking and flag it for admin review.
+    isSuspicious: { type: Boolean, default: false },
   },
   { timestamps: true },
 );
@@ -32,6 +35,7 @@ orderSchema.index({ name: 'text', phone: 'text', orderId: 'text' });
 orderSchema.index({ createdAt: -1 });
 orderSchema.index({ orderStatus: 1 });
 orderSchema.index({ responseStatus: 1 });
+orderSchema.index({ isSuspicious: 1 });
 
 if (process.env.NODE_ENV !== 'production' && mongoose.models.Order) {
   delete mongoose.models.Order;

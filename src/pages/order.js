@@ -13,6 +13,7 @@ import DeliveryAndReturnPolicy from '@/components/CartPolicy';
 import Link from 'next/link';
 import { clearCart } from '@/store/cartSlice';
 import { useRouter } from 'next/router';
+import { isSuspiciousOrderQuantity } from '@/utils/orderTracking';
 
 function Cart() {
   const dispatch = useDispatch();
@@ -248,31 +249,35 @@ function Cart() {
         setOrderDetails(order);
         setShowPopup(true);
 
-        // Push purchase event to data layer
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event: 'purchase',
-          user_data: {
-            name: formData.fullName,
-            phone: formData.phoneNumber,
-            address: formData.address,
-            district: formData.district,
-          },
-          ecommerce: {
-            transaction_id: order.order.orderId || 'ORD-UNKNOWN',
-            value: order.order.grandTotal || 0,
-            currency: 'BDT',
-            shipping: order.order.shippingCharge || 0,
-            items: order.order.items.map((item) => ({
-              item_id: item.id || 'unknown',
-              item_name: item.title || 'unknown',
-              price: item.price || 0,
-              quantity: item.quantity || 1,
-              item_variant: item.selectedColor || item.selectedVariantValue,
-              item_category: item.category || 'Accessories',
-            })),
-          },
-        });
+        // Push purchase event to data layer — skip for bulk-quantity orders (likely
+        // fake COD orders with fabricated details) so ad platforms don't optimize on
+        // fake conversion value. The order itself is still saved to the database above.
+        if (!isSuspiciousOrderQuantity(order.order.items)) {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'purchase',
+            user_data: {
+              name: formData.fullName,
+              phone: formData.phoneNumber,
+              address: formData.address,
+              district: formData.district,
+            },
+            ecommerce: {
+              transaction_id: order.order.orderId || 'ORD-UNKNOWN',
+              value: order.order.grandTotal || 0,
+              currency: 'BDT',
+              shipping: order.order.shippingCharge || 0,
+              items: order.order.items.map((item) => ({
+                item_id: item.id || 'unknown',
+                item_name: item.title || 'unknown',
+                price: item.price || 0,
+                quantity: item.quantity || 1,
+                item_variant: item.selectedColor || item.selectedVariantValue,
+                item_category: item.category || 'Accessories',
+              })),
+            },
+          });
+        }
       }
     } catch (error) {
       console.error('Fetch error:', error.name, error.message);

@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(Get-ChildItem -Path \"E:\\\\ecom_new\\\\src\" -Recurse -Filter \"anti-lost-tracker*\")",
-      "Bash(Select-Object FullName)"
+      "Bash(Select-Object FullName)",
+      "Bash(node -e \"require\\('@babel/core'\\)\")",
+      "Bash(npx --no-install eslint src/components/checkout/OrderDialog.jsx src/pages/order.js src/utils/orderTracking.js)",
+      "Bash(npx next *)"
     ]
   }
 }

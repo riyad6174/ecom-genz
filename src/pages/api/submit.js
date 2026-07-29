@@ -1,5 +1,6 @@
 import { connectDB } from '@/lib/mongodb';
 import Order from '@/models/Order';
+import { getOrderTotalQuantity, MAX_TRUSTED_ORDER_QUANTITY } from '@/utils/orderTracking';
 
 export default async function handler(req, res) {
   if (req.method === 'HEAD') {
@@ -33,6 +34,13 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: 'Order ID is required' });
   }
 
+  let itemsArray = [];
+  try {
+    itemsArray = typeof items === 'string' ? JSON.parse(items || '[]') : items || [];
+  } catch {
+    itemsArray = [];
+  }
+
   try {
     await connectDB();
 
@@ -50,6 +58,7 @@ export default async function handler(req, res) {
       submissionTime:
         submissionTime ||
         new Date().toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }),
+      isSuspicious: getOrderTotalQuantity(itemsArray) > MAX_TRUSTED_ORDER_QUANTITY,
     });
 
     return res.status(200).json({

@@ -98,6 +98,7 @@ export default function AdminOrders() {
   const [responseFilter, setResponseFilter] = useState('');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
+  const [suspiciousFilter, setSuspiciousFilter] = useState('');
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -109,6 +110,7 @@ export default function AdminOrders() {
   const [stats, setStats] = useState({
     today: 0, pendingToday: 0, confirmedToday: 0, cancelledToday: 0,
     total: 0, totalPending: 0, totalConfirmed: 0, totalCancelled: 0,
+    suspiciousToday: 0, totalSuspicious: 0,
   });
 
   const debounceRef = useRef(null);
@@ -130,7 +132,7 @@ export default function AdminOrders() {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ page, limit: 30, search, status: statusFilter, responseStatus: responseFilter, from: fromDate, to: toDate });
+      const params = new URLSearchParams({ page, limit: 30, search, status: statusFilter, responseStatus: responseFilter, from: fromDate, to: toDate, suspicious: suspiciousFilter });
       const res = await fetch(`/api/admin/orders?${params}`);
       if (!res.ok) throw new Error('Failed');
       const data = await res.json();
@@ -147,14 +149,16 @@ export default function AdminOrders() {
           totalPending: data.stats.totalPending,
           totalConfirmed: data.stats.totalConfirmed,
           totalCancelled: data.stats.totalCancelled,
+          suspiciousToday: data.stats.suspiciousToday,
+          totalSuspicious: data.stats.totalSuspicious,
         });
       }
     } catch { /* keep state */ }
     finally { setLoading(false); }
-  }, [page, search, statusFilter, responseFilter, fromDate, toDate]);
+  }, [page, search, statusFilter, responseFilter, fromDate, toDate, suspiciousFilter]);
 
   useEffect(() => { if (authChecked) fetchOrders(); }, [authChecked, fetchOrders]);
-  useEffect(() => { setPage(1); }, [search, statusFilter, responseFilter, fromDate, toDate]);
+  useEffect(() => { setPage(1); }, [search, statusFilter, responseFilter, fromDate, toDate, suspiciousFilter]);
 
   const handleSearchChange = (e) => {
     clearTimeout(debounceRef.current);
@@ -162,7 +166,7 @@ export default function AdminOrders() {
   };
 
   const handleResetFilters = () => {
-    setSearch(''); setStatusFilter(''); setResponseFilter(''); setFromDate(''); setToDate(''); setPage(1);
+    setSearch(''); setStatusFilter(''); setResponseFilter(''); setFromDate(''); setToDate(''); setSuspiciousFilter(''); setPage(1);
   };
 
   const handleLogout = async () => {
@@ -297,12 +301,13 @@ export default function AdminOrders() {
           </div>
 
           {/* Stats */}
-          <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5'>
+          <div className='grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5'>
             {[
               { todayLabel: "Today's Orders",    todayVal: stats.today,          totalLabel: 'Total',    totalVal: stats.total,          color: 'text-blue-400',    bg: 'bg-blue-500/10',    border: 'border-blue-500/20',    icon: FiCalendar    },
               { todayLabel: "Today's Pending",   todayVal: stats.pendingToday,   totalLabel: 'All Time', totalVal: stats.totalPending,   color: 'text-yellow-400',  bg: 'bg-yellow-500/10',  border: 'border-yellow-500/20',  icon: FiClock       },
               { todayLabel: "Today's Confirmed", todayVal: stats.confirmedToday, totalLabel: 'All Time', totalVal: stats.totalConfirmed, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', icon: FiCheckCircle },
               { todayLabel: "Today's Cancelled", todayVal: stats.cancelledToday, totalLabel: 'All Time', totalVal: stats.totalCancelled, color: 'text-red-400',     bg: 'bg-red-500/10',     border: 'border-red-500/20',     icon: FiXCircle     },
+              { todayLabel: "Today's Suspicious", todayVal: stats.suspiciousToday, totalLabel: 'All Time', totalVal: stats.totalSuspicious, color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20', icon: FiAlertTriangle },
             ].map((s, idx) => (
               <div key={idx} className={`bg-slate-800 p-4 rounded-2xl border ${s.border} flex items-center justify-between`}>
                 <div>
@@ -322,7 +327,7 @@ export default function AdminOrders() {
             <div className='flex items-center gap-2 mb-4 text-[11px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-700 pb-3'>
               <FiFilter className='w-3.5 h-3.5 text-blue-400' /> Filters
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4'>
               <div className='xl:col-span-2'>
                 <label className='text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block'>Search</label>
                 <div className='relative'>
@@ -336,7 +341,7 @@ export default function AdminOrders() {
                   />
                 </div>
               </div>
-              <div className='grid grid-cols-2 gap-3 xl:col-span-2'>
+              <div className='grid grid-cols-3 gap-3 xl:col-span-3'>
                 <div>
                   <label className='text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block'>Order Status</label>
                   <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className='w-full text-sm bg-slate-900 border border-slate-600 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-500 text-slate-200 transition-colors cursor-pointer'>
@@ -356,6 +361,14 @@ export default function AdminOrders() {
                     <option value='did_not_pick'>🚫 Did Not Pick</option>
                     <option value='call_later'>🔔 Call Later</option>
                     <option value='fake_order'>⚠️ Fake Order</option>
+                  </select>
+                </div>
+                <div>
+                  <label className='text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block'>Quantity</label>
+                  <select value={suspiciousFilter} onChange={(e) => setSuspiciousFilter(e.target.value)} className='w-full text-sm bg-slate-900 border border-slate-600 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-500 text-slate-200 transition-colors cursor-pointer'>
+                    <option value=''>All</option>
+                    <option value='true'>⚠️ Suspicious Only</option>
+                    <option value='false'>Normal Only</option>
                   </select>
                 </div>
               </div>
@@ -422,8 +435,8 @@ export default function AdminOrders() {
                       const response = RESPONSE_STATUS_CONFIG[order.responseStatus || 'null'];
                       const RespIcon = response.icon;
                       const status = order.orderStatus || 'pending';
-                      const borderClass = ROW_BORDER[status];
-                      const bgClass = ROW_STYLE[status]?.bg || '';
+                      const borderClass = order.isSuspicious ? 'border-l-orange-500' : ROW_BORDER[status];
+                      const bgClass = order.isSuspicious ? 'bg-orange-500/[0.06]' : (ROW_STYLE[status]?.bg || '');
                       return (
                         <tr key={order._id} className={`border-l-4 ${borderClass} ${bgClass} hover:bg-slate-700/40 transition-colors`}>
                           {/* Action */}
@@ -472,7 +485,17 @@ export default function AdminOrders() {
                           {/* Customer */}
                           <td className='px-5 py-4'>
                             <div className='flex flex-col gap-0.5'>
-                              <span className='font-bold text-slate-100 text-sm whitespace-nowrap'>{order.name}</span>
+                              <div className='flex items-center gap-1.5'>
+                                <span className='font-bold text-slate-100 text-sm whitespace-nowrap'>{order.name}</span>
+                                {order.isSuspicious && (
+                                  <span
+                                    title='Bulk quantity order — excluded from GTM/Meta conversion tracking'
+                                    className='inline-flex items-center gap-1 px-1.5 py-0.5 rounded border border-orange-500/40 bg-orange-500/15 text-orange-400 text-[9px] font-black uppercase tracking-wider shrink-0'
+                                  >
+                                    <FiAlertTriangle className='w-2.5 h-2.5' /> Suspicious
+                                  </span>
+                                )}
+                              </div>
                               <a
                                 href={`tel:${order.phone}`}
                                 className='text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors'
@@ -560,7 +583,14 @@ export default function AdminOrders() {
                       {/* Modal Header */}
                       <div className='flex items-start justify-between mb-5'>
                         <div>
-                          <Dialog.Title as='h3' className='text-lg font-black text-slate-100'>Order Details</Dialog.Title>
+                          <div className='flex items-center gap-2'>
+                            <Dialog.Title as='h3' className='text-lg font-black text-slate-100'>Order Details</Dialog.Title>
+                            {selectedOrder?.isSuspicious && (
+                              <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded border border-orange-500/40 bg-orange-500/15 text-orange-400 text-[9px] font-black uppercase tracking-wider'>
+                                <FiAlertTriangle className='w-2.5 h-2.5' /> Suspicious — not sent to GTM/Meta
+                              </span>
+                            )}
+                          </div>
                           <p className='text-[11px] font-black text-slate-500 uppercase tracking-wider mt-0.5'>#{selectedOrder?.orderId}</p>
                           {selectedOrder?.items && (() => {
                             try {

@@ -21,6 +21,7 @@ export default async function handler(req, res) {
       responseStatus = '',
       from = '',
       to = '',
+      suspicious = '',
     } = req.query;
 
     const pageNum = Math.max(1, parseInt(page));
@@ -42,6 +43,12 @@ export default async function handler(req, res) {
       filter.responseStatus = null;
     } else if (responseStatus && ['called', 'number_off', 'did_not_pick', 'call_later', 'fake_order'].includes(responseStatus)) {
       filter.responseStatus = responseStatus;
+    }
+
+    if (suspicious === 'true') {
+      filter.isSuspicious = true;
+    } else if (suspicious === 'false') {
+      filter.isSuspicious = { $ne: true };
     }
 
     if (from || to) {
@@ -72,6 +79,8 @@ export default async function handler(req, res) {
         Order.countDocuments({ orderStatus: 'pending' }),
         Order.countDocuments({ orderStatus: 'confirmed' }),
         Order.countDocuments({ orderStatus: 'cancel' }),
+        Order.countDocuments({ isSuspicious: true, createdAt: { $gte: todayStartUTC } }),
+        Order.countDocuments({ isSuspicious: true }),
       ]),
     ]);
 
@@ -89,6 +98,8 @@ export default async function handler(req, res) {
         totalPending: stats[5],
         totalConfirmed: stats[6],
         totalCancelled: stats[7],
+        suspiciousToday: stats[8],
+        totalSuspicious: stats[9],
       },
     });
   } catch (error) {

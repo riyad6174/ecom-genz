@@ -5,6 +5,7 @@ import { HiOutlineTrash } from 'react-icons/hi';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { clearCart, removeFromCart, updateQuantity } from '@/store/cartSlice';
+import { isSuspiciousOrderQuantity } from '@/utils/orderTracking';
 
 const OrderDialog = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -211,32 +212,37 @@ const OrderDialog = ({ isOpen, onClose }) => {
       setOrderDetails(order);
       setCurrentView('confirmation');
       setTimeout(() => setConfirmationAnimating(true), 50);
-      // GTM purchase event — preserving the same dataLayer structure as the original app
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: 'purchase',
-        user_data: {
-          name: formData.fullName,
-          phone: formData.phoneNumber,
-          address: formData.address,
-          district: formData.deliveryZone,
-        },
-        ecommerce: {
-          transaction_id: order.order.orderId || 'ORD-UNKNOWN',
-          value: order.order.grandTotal || 0,
-          currency: 'BDT',
-          shipping: order.order.shippingCharge || 0,
-          items: order.order.items.map((item) => ({
-            item_id: item.id || 'unknown',
-            item_name: item.title || 'unknown',
-            price: item.price || 0,
-            quantity: item.quantity || 1,
-            item_variant: item.selectedColor || item.selectedVariantValue,
-            item_category: item.category || 'Accessories',
-          })),
-        },
-      });
+      // GTM purchase event — preserving the same dataLayer structure as the original app.
+      // Skip firing it for bulk-quantity orders (likely fake COD orders with fabricated
+      // details) so Google/Meta ad platforms don't optimize on fake conversion value.
+      // The order itself is still saved to the database above.
+      if (!isSuspiciousOrderQuantity(order.order.items)) {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ ecommerce: null });
+        window.dataLayer.push({
+          event: 'purchase',
+          user_data: {
+            name: formData.fullName,
+            phone: formData.phoneNumber,
+            address: formData.address,
+            district: formData.deliveryZone,
+          },
+          ecommerce: {
+            transaction_id: order.order.orderId || 'ORD-UNKNOWN',
+            value: order.order.grandTotal || 0,
+            currency: 'BDT',
+            shipping: order.order.shippingCharge || 0,
+            items: order.order.items.map((item) => ({
+              item_id: item.id || 'unknown',
+              item_name: item.title || 'unknown',
+              price: item.price || 0,
+              quantity: item.quantity || 1,
+              item_variant: item.selectedColor || item.selectedVariantValue,
+              item_category: item.category || 'Accessories',
+            })),
+          },
+        });
+      }
       setIsLoading(false);
     };
 
