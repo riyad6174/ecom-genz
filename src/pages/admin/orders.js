@@ -295,9 +295,26 @@ export default function AdminOrders() {
         </header>
 
         <main className='p-4 sm:p-6 max-w-[1900px] mx-auto w-full flex-grow'>
-          <div className='mb-5'>
-            <h1 className='text-2xl font-black text-slate-100'>Order Management</h1>
-            <p className='text-slate-500 text-sm mt-0.5'>Real-time control center.</p>
+          <div className='mb-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3'>
+            <div>
+              <h1 className='text-2xl font-black text-slate-100'>Order Management</h1>
+              <p className='text-slate-500 text-sm mt-0.5'>Real-time control center.</p>
+            </div>
+            <div className='flex items-center gap-2 sm:hidden'>
+              <button
+                onClick={fetchOrders}
+                className='flex items-center justify-center gap-2 px-3 py-2 bg-slate-700 border border-slate-600 rounded-xl text-slate-300 text-[11px] font-black uppercase tracking-wider hover:bg-slate-600 transition-all'
+              >
+                <FiRefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                Reload
+              </button>
+              <button
+                onClick={handleLogout}
+                className='flex items-center justify-center gap-2 px-3 py-2 text-[11px] font-black text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 rounded-xl transition-all border border-red-500/20 uppercase tracking-wider'
+              >
+                Logout
+              </button>
+            </div>
           </div>
 
           {/* Stats */}
@@ -341,7 +358,7 @@ export default function AdminOrders() {
                   />
                 </div>
               </div>
-              <div className='grid grid-cols-3 gap-3 xl:col-span-3'>
+              <div className='grid grid-cols-1 sm:grid-cols-3 gap-3 xl:col-span-3'>
                 <div>
                   <label className='text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block'>Order Status</label>
                   <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className='w-full text-sm bg-slate-900 border border-slate-600 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-500 text-slate-200 transition-colors cursor-pointer'>
@@ -394,8 +411,117 @@ export default function AdminOrders() {
             </div>
           </div>
 
+          {/* Mobile Card List */}
+          <div className='md:hidden mb-5 space-y-3'>
+            {loading ? (
+              <div className='bg-slate-800 rounded-2xl border border-slate-700 py-20 flex flex-col items-center gap-3'>
+                <div className='animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full' />
+                <p className='text-slate-500 font-black text-[11px] uppercase tracking-widest animate-pulse'>Loading orders...</p>
+              </div>
+            ) : orders.length === 0 ? (
+              <div className='bg-slate-800 rounded-2xl border border-slate-700 py-20 flex flex-col items-center gap-3'>
+                <FiSearch className='w-8 h-8 text-slate-600' />
+                <p className='text-slate-400 font-bold'>No orders found</p>
+                <button onClick={handleResetFilters} className='mt-1 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-colors'>View All</button>
+              </div>
+            ) : (
+              orders.map((order) => {
+                const response = RESPONSE_STATUS_CONFIG[order.responseStatus || 'null'];
+                const RespIcon = response.icon;
+                const status = order.orderStatus || 'pending';
+                const borderClass = order.isSuspicious ? 'border-l-orange-500' : ROW_BORDER[status];
+                const bgClass = order.isSuspicious ? 'bg-orange-500/[0.06]' : (ROW_STYLE[status]?.bg || '');
+                const t = formatOrderTime(order);
+                return (
+                  <div key={order._id} className={`border-l-4 ${borderClass} ${bgClass || 'bg-slate-800'} rounded-2xl border border-slate-700 p-4`}>
+                    <div className='flex items-start justify-between gap-3 mb-3'>
+                      <div className='flex items-center gap-2 min-w-0'>
+                        <button
+                          onClick={() => openUpdateModal(order)}
+                          className='w-9 h-9 flex items-center justify-center bg-slate-700 border border-slate-600 rounded-xl text-slate-300 hover:bg-blue-600 hover:border-blue-600 hover:text-white transition-all shrink-0'
+                        >
+                          <FiEdit3 className='w-4 h-4' />
+                        </button>
+                        <div className='min-w-0'>
+                          <div className='flex items-center gap-1.5'>
+                            <span className='font-bold text-slate-100 text-sm truncate'>{order.name}</span>
+                            {order.isSuspicious && (
+                              <span className='inline-flex items-center gap-1 px-1.5 py-0.5 rounded border border-orange-500/40 bg-orange-500/15 text-orange-400 text-[9px] font-black uppercase tracking-wider shrink-0'>
+                                <FiAlertTriangle className='w-2.5 h-2.5' /> Suspicious
+                              </span>
+                            )}
+                          </div>
+                          <a href={`tel:${order.phone}`} className='text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors'>{formatPhone(order.phone)}</a>
+                        </div>
+                      </div>
+                      <div className='text-right shrink-0'>
+                        <span className='block font-black text-slate-100 text-sm whitespace-nowrap'>৳{Number(order.grandTotal || 0).toLocaleString('en-BD')}</span>
+                        <span className='text-[10px] text-slate-500 font-bold uppercase'>{parseItemQty(order.items)} pcs</span>
+                      </div>
+                    </div>
+
+                    <div className='flex flex-wrap items-center gap-2 mb-3'>
+                      {(() => {
+                        const st = ORDER_STATUS_CONFIG[status];
+                        const Icon = st.icon;
+                        return (
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-wider whitespace-nowrap ${st.badge}`}>
+                            <Icon className='w-3 h-3' />
+                            {st.label}
+                          </span>
+                        );
+                      })()}
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[10px] font-black uppercase tracking-wider whitespace-nowrap ${response.badge}`}>
+                        <RespIcon className='w-3 h-3' />
+                        {response.label}
+                      </span>
+                      {order.note && (
+                        <span className='inline-flex items-center gap-1 px-2 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-400 text-[10px] font-black uppercase tracking-wider'>
+                          <FiFileText className='w-3 h-3' /> Note
+                        </span>
+                      )}
+                    </div>
+
+                    <div className='space-y-2 text-xs'>
+                      <div className='flex items-center gap-2'>
+                        <span className='text-[10px] font-black uppercase text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20 w-fit'>{order.deliveryZone || 'Standard'}</span>
+                      </div>
+                      <p className='text-slate-400 leading-relaxed'>{order.address}</p>
+                      <div className='text-[11px] leading-snug bg-slate-900/40 rounded-lg p-2.5 border border-slate-700/50'>{parseItems(order.items)}</div>
+                      <div className='flex items-center justify-between pt-1 border-t border-slate-700/40 text-[11px]'>
+                        <span className='font-bold text-slate-300 whitespace-nowrap'>{t.date} · {t.time}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+            {totalPages > 1 && (
+              <div className='bg-slate-800 rounded-2xl border border-slate-700 px-4 py-4 flex flex-col items-center justify-between gap-3'>
+                <div className='text-[11px] font-black text-slate-500 uppercase tracking-wider'>
+                  Page <span className='text-blue-400'>{page}</span> of {totalPages} — {total} orders
+                </div>
+                <div className='flex items-center gap-1'>
+                  <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className='h-9 w-9 flex items-center justify-center rounded-lg bg-slate-700 border border-slate-600 text-slate-400 hover:text-blue-400 hover:border-blue-500/50 disabled:opacity-30 disabled:pointer-events-none transition-all'>
+                    <FiArrowLeft className='w-4 h-4' />
+                  </button>
+                  <div className='flex items-center gap-1 mx-1'>
+                    {[...Array(Math.min(5, totalPages))].map((_, i) => (
+                      <button key={i + 1} onClick={() => setPage(i + 1)} className={`h-9 w-9 text-xs font-black rounded-lg transition-all ${page === i + 1 ? 'bg-blue-600 text-white' : 'bg-slate-700 border border-slate-600 text-slate-400 hover:bg-slate-600'}`}>
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                  <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages} className='h-9 w-9 flex items-center justify-center rounded-lg bg-slate-700 border border-slate-600 text-slate-400 hover:text-blue-400 hover:border-blue-500/50 disabled:opacity-30 disabled:pointer-events-none transition-all'>
+                    <FiArrowRight className='w-4 h-4' />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Table */}
-          <div className='bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden'>
+          <div className='hidden md:block bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden'>
             <div className='overflow-x-auto'>
               <table className='w-full text-sm text-left'>
                 <thead>
