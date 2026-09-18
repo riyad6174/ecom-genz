@@ -92,7 +92,7 @@
       // '/assets/product/flosser/4.jpg',
     ],
     variants: [
-      { type: 'Mint' },
+      // { type: 'Mint' },
       { type: 'Grape' },
       { type: 'Watermelon' },
       { type: 'Peace' },
