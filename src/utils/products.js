@@ -96,7 +96,7 @@
       { type: 'Grape' },
       { type: 'Watermelon' },
       { type: 'Peace' },
-      { type: 'Lemon' },
+      // { type: 'Lemon' },
       { type: 'RedBull' },
     ],
   },
