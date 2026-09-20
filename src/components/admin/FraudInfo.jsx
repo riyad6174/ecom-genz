@@ -67,6 +67,7 @@ export function FraudBadges({ order }) {
 }
 
 export function CourierHistory({ order }) {
+  const [open, setOpen] = useState(true);
   const fc = order?.fraudCheck;
   const hasData = order?.qcStatus === 'ok' && fc && (fc.totalParcels > 0 || (fc.deliveryRate !== null && fc.deliveryRate !== undefined));
   let fallback = '';
@@ -81,10 +82,23 @@ export function CourierHistory({ order }) {
   const couriers = fc?.couriers ? Object.entries(fc.couriers) : [];
 
   return (
-    <div className='bg-slate-900/60 rounded-xl border border-slate-700 p-4 mb-5'>
-      <h4 className='text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2'>
-        <span className='w-1 h-3.5 bg-blue-500 rounded-full inline-block' /> Courier History
-      </h4>
+    <div className='bg-slate-900/60 rounded-xl border border-slate-700 mb-5 overflow-hidden'>
+      <button onClick={() => setOpen((o) => !o)} className='w-full flex items-center justify-between gap-3 px-4 py-3 text-left'>
+        <span className='text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2'>
+          <span className='w-1 h-3.5 bg-blue-500 rounded-full inline-block' /> Courier History
+        </span>
+        <span className='flex items-center gap-1.5'>
+          {hasData && fc.deliveryRate !== null && fc.deliveryRate !== undefined && (
+            <span className={`px-1.5 py-0.5 rounded border text-[9px] font-black uppercase tracking-wider ${tone.badge}`}>{Math.round(fc.deliveryRate)}%</span>
+          )}
+          {hasData && fc.riskStatus && (
+            <span className={`px-1.5 py-0.5 rounded border text-[9px] font-black uppercase tracking-wider ${riskBadgeClass(fc.riskStatus)}`}>{fc.riskStatus}</span>
+          )}
+          <FiChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${open ? 'rotate-180' : ''}`} />
+        </span>
+      </button>
+      {open && (
+      <div className='border-t border-slate-700/50 p-4'>
       {!hasData ? (
         <p className='text-xs text-slate-400'>{fallback}</p>
       ) : (
@@ -138,12 +152,14 @@ export function CourierHistory({ order }) {
           )}
         </>
       )}
+      </div>
+      )}
     </div>
   );
 }
 
 export function TrackingSection({ order }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const src = order?.trafficSource || 'organic';
   const srcCfg = SOURCE_CONFIG[src];
   const cust = CUSTOMER_CONFIG[order?.customerType] || CUSTOMER_CONFIG.new;

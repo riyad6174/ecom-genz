@@ -741,7 +741,7 @@ export default function AdminOrders() {
             <div className='fixed inset-0 overflow-y-auto'>
               <div className='flex min-h-full items-center justify-center p-4'>
                 <Transition.Child as={Fragment} enter='ease-out duration-200' enterFrom='opacity-0 scale-95' enterTo='opacity-100 scale-100' leave='ease-in duration-150' leaveFrom='opacity-100 scale-100' leaveTo='opacity-0 scale-95'>
-                  <Dialog.Panel className='w-full max-w-2xl rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl overflow-hidden'>
+                  <Dialog.Panel className='w-full max-w-5xl rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl overflow-hidden'>
                     <div className='p-6'>
                       {/* Modal Header */}
                       <div className='flex items-start justify-between mb-5'>
@@ -783,6 +783,8 @@ export default function AdminOrders() {
                         </button>
                       </div>
 
+                      <div className='grid grid-cols-1 lg:grid-cols-2 gap-x-6 items-start'>
+                      <div className='min-w-0'>
                       {/* Customer Info Table */}
                       <div className='bg-slate-900/60 rounded-xl border border-slate-700 overflow-hidden mb-5'>
                         <table className='w-full text-sm'>
@@ -815,9 +817,6 @@ export default function AdminOrders() {
                           </tbody>
                         </table>
                       </div>
-
-                      <CourierHistory order={selectedOrder} />
-                      <TrackingSection key={selectedOrder?._id} order={selectedOrder} />
 
                       {/* Status Controls */}
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-5 mb-5'>
@@ -894,6 +893,14 @@ export default function AdminOrders() {
                           <FiFileText className='w-3.5 h-3.5' />
                           {savingNote ? 'Saving...' : 'Save Note'}
                         </button>
+                      </div>
+                      </div>
+
+                      {/* Right column: courier info + tracking (collapsible) */}
+                      <div className='min-w-0'>
+                        <CourierHistory order={selectedOrder} />
+                        <TrackingSection order={selectedOrder} />
+                      </div>
                       </div>
 
                       {/* Footer Actions */}
