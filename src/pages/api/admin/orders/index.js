@@ -22,6 +22,9 @@ export default async function handler(req, res) {
       from = '',
       to = '',
       suspicious = '',
+      source = '',
+      customerType = '',
+      risk = '',
     } = req.query;
 
     const pageNum = Math.max(1, parseInt(page));
@@ -50,6 +53,21 @@ export default async function handler(req, res) {
     } else if (suspicious === 'false') {
       filter.isSuspicious = { $ne: true };
     }
+
+    if (source && /^[\w.-]{1,50}$/.test(source)) {
+      filter.trafficSource = source;
+    }
+
+    if (customerType === 'new') {
+      filter.customerType = { $ne: 'repeat' };
+    } else if (customerType === 'repeat') {
+      filter.customerType = 'repeat';
+    }
+
+    if (risk === 'low') filter['fraudCheck.riskStatus'] = 'Low Risk';
+    else if (risk === 'medium') filter['fraudCheck.riskStatus'] = 'Medium Risk';
+    else if (risk === 'high') filter['fraudCheck.riskStatus'] = 'High Risk';
+    else if (risk === 'unchecked') filter['fraudCheck.riskStatus'] = { $in: ['', null] };
 
     if (from || to) {
       filter.createdAt = {};

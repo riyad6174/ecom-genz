@@ -8,6 +8,7 @@ import {
   FiCopy, FiCalendar, FiArrowLeft, FiArrowRight, FiFileText, FiAlertTriangle,
 } from 'react-icons/fi';
 import { Dialog, Transition } from '@headlessui/react';
+import { FraudBadges, CourierHistory, TrackingSection } from '@/components/admin/FraudInfo';
 
 const ORDER_STATUS_CONFIG = {
   pending:   { label: 'Pending',   btn: 'bg-yellow-600 hover:bg-yellow-700',   icon: FiClock,       badge: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'  },
@@ -99,6 +100,9 @@ export default function AdminOrders() {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [suspiciousFilter, setSuspiciousFilter] = useState('');
+  const [sourceFilter, setSourceFilter] = useState('');
+  const [customerFilter, setCustomerFilter] = useState('');
+  const [riskFilter, setRiskFilter] = useState('');
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -132,7 +136,7 @@ export default function AdminOrders() {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ page, limit: 30, search, status: statusFilter, responseStatus: responseFilter, from: fromDate, to: toDate, suspicious: suspiciousFilter });
+      const params = new URLSearchParams({ page, limit: 30, search, status: statusFilter, responseStatus: responseFilter, from: fromDate, to: toDate, suspicious: suspiciousFilter, source: sourceFilter, customerType: customerFilter, risk: riskFilter });
       const res = await fetch(`/api/admin/orders?${params}`);
       if (!res.ok) throw new Error('Failed');
       const data = await res.json();
@@ -155,10 +159,10 @@ export default function AdminOrders() {
       }
     } catch { /* keep state */ }
     finally { setLoading(false); }
-  }, [page, search, statusFilter, responseFilter, fromDate, toDate, suspiciousFilter]);
+  }, [page, search, statusFilter, responseFilter, fromDate, toDate, suspiciousFilter, sourceFilter, customerFilter, riskFilter]);
 
   useEffect(() => { if (authChecked) fetchOrders(); }, [authChecked, fetchOrders]);
-  useEffect(() => { setPage(1); }, [search, statusFilter, responseFilter, fromDate, toDate, suspiciousFilter]);
+  useEffect(() => { setPage(1); }, [search, statusFilter, responseFilter, fromDate, toDate, suspiciousFilter, sourceFilter, customerFilter, riskFilter]);
 
   const handleSearchChange = (e) => {
     clearTimeout(debounceRef.current);
@@ -166,7 +170,7 @@ export default function AdminOrders() {
   };
 
   const handleResetFilters = () => {
-    setSearch(''); setStatusFilter(''); setResponseFilter(''); setFromDate(''); setToDate(''); setSuspiciousFilter(''); setPage(1);
+    setSearch(''); setStatusFilter(''); setResponseFilter(''); setFromDate(''); setToDate(''); setSuspiciousFilter(''); setSourceFilter(''); setCustomerFilter(''); setRiskFilter(''); setPage(1);
   };
 
   const handleLogout = async () => {
@@ -389,6 +393,37 @@ export default function AdminOrders() {
                   </select>
                 </div>
               </div>
+              <div className='grid grid-cols-1 sm:grid-cols-3 gap-3 xl:col-span-3'>
+                <div>
+                  <label className='text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block'>Source</label>
+                  <select value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)} className='w-full text-sm bg-slate-900 border border-slate-600 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-500 text-slate-200 transition-colors cursor-pointer'>
+                    <option value=''>All</option>
+                    <option value='meta'>Meta</option>
+                    <option value='google'>Google</option>
+                    <option value='tiktok'>TikTok</option>
+                    <option value='organic'>Organic</option>
+                    <option value='referral'>Referral</option>
+                  </select>
+                </div>
+                <div>
+                  <label className='text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block'>Customer</label>
+                  <select value={customerFilter} onChange={(e) => setCustomerFilter(e.target.value)} className='w-full text-sm bg-slate-900 border border-slate-600 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-500 text-slate-200 transition-colors cursor-pointer'>
+                    <option value=''>All</option>
+                    <option value='new'>New</option>
+                    <option value='repeat'>Repeat</option>
+                  </select>
+                </div>
+                <div>
+                  <label className='text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block'>Courier Risk</label>
+                  <select value={riskFilter} onChange={(e) => setRiskFilter(e.target.value)} className='w-full text-sm bg-slate-900 border border-slate-600 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-500 text-slate-200 transition-colors cursor-pointer'>
+                    <option value=''>All</option>
+                    <option value='low'>Low Risk</option>
+                    <option value='medium'>Medium Risk</option>
+                    <option value='high'>High Risk</option>
+                    <option value='unchecked'>Not Checked</option>
+                  </select>
+                </div>
+              </div>
               <div>
                 <label className='text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 block'>Date Range</label>
                 <div className='flex gap-2 items-center'>
@@ -452,6 +487,7 @@ export default function AdminOrders() {
                             )}
                           </div>
                           <a href={`tel:${order.phone}`} className='text-xs text-blue-400 hover:text-blue-300 font-medium transition-colors'>{formatPhone(order.phone)}</a>
+                          <FraudBadges order={order} />
                         </div>
                       </div>
                       <div className='text-right shrink-0'>
@@ -629,6 +665,7 @@ export default function AdminOrders() {
                               >
                                 {formatPhone(order.phone)}
                               </a>
+                              <FraudBadges order={order} />
                             </div>
                           </td>
                           {/* Shipping */}
@@ -778,6 +815,9 @@ export default function AdminOrders() {
                           </tbody>
                         </table>
                       </div>
+
+                      <CourierHistory order={selectedOrder} />
+                      <TrackingSection key={selectedOrder?._id} order={selectedOrder} />
 
                       {/* Status Controls */}
                       <div className='grid grid-cols-1 md:grid-cols-2 gap-5 mb-5'>

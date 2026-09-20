@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//e/ecommerce-frontend/src/pages/api/cron/**)"
+    ]
+  }
+}

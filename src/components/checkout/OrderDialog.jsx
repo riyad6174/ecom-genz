@@ -5,7 +5,7 @@ import { HiOutlineTrash } from 'react-icons/hi';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { clearCart, removeFromCart, updateQuantity } from '@/store/cartSlice';
-import { isSuspiciousOrderQuantity } from '@/utils/orderTracking';
+import { collectOrderMeta, isSuspiciousOrderQuantity } from '@/utils/orderTracking';
 
 const OrderDialog = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
@@ -206,6 +206,7 @@ const OrderDialog = ({ isOpen, onClose }) => {
       orderId: uniqueId,
       orderDate: new Date().toISOString(),
       submissionTime: bdtTime,
+      ...collectOrderMeta(),
     };
 
     const onSuccess = () => {
